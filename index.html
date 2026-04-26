@@ -1,0 +1,1402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>notthatcooked 🔥</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{
+  --bg:#07060c;--surface:#0f0e1a;--card:#1a1828;--card-h:#221f35;--border:rgba(255,255,255,0.08);
+  --text:#f0f0ff;--muted:#8a8fa3;
+  --fire:#ff5500;--fire2:#ff2e60;--fire-g:rgba(255,85,0,.25);
+  --xp:#6366f1;--xp2:#a855f7;--xp-g:rgba(99,102,241,.35);
+  --ok:#22c55e;--ok-g:rgba(34,197,94,.3);
+  --err:#ef4444;--err-g:rgba(239,68,68,.3);
+  --str:#fbbf24;--str-g:rgba(251,191,36,.35);
+  --r:14px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Outfit',system-ui,sans-serif;min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+body::before{content:'';position:fixed;top:-30%;left:50%;transform:translateX(-50%);width:900px;height:900px;background:radial-gradient(ellipse,rgba(255,85,0,.07) 0%,transparent 65%);pointer-events:none;z-index:0}
+body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.015) 2px,rgba(0,0,0,.015) 4px);pointer-events:none;z-index:99999}
+#app{position:relative;z-index:1;min-height:100vh}
+#hdr{position:fixed;top:0;left:0;right:0;z-index:1000;background:rgba(7,6,12,.88);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 16px;height:58px;display:flex;align-items:center;gap:14px}
+.h-logo{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--fire);cursor:pointer;letter-spacing:.05em;text-shadow:0 0 18px var(--fire-g);flex-shrink:0}
+.h-xp{flex:1;min-width:0}.h-lrow{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:4px}
+.h-lvl{font-size:10px;font-weight:600;color:var(--xp);background:rgba(99,102,241,.15);border:1px solid rgba(99,102,241,.3);padding:2px 8px;border-radius:20px;white-space:nowrap}
+.h-xplbl{font-size:10px;color:var(--muted);white-space:nowrap}.xp-out{height:5px;background:rgba(255,255,255,.08);border-radius:3px;overflow:hidden}
+.xp-in{height:100%;background:linear-gradient(90deg,var(--xp),var(--xp2));border-radius:3px;transition:width .6s cubic-bezier(.34,1.56,.64,1);box-shadow:0 0 8px var(--xp-g)}
+.h-right{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.avatar{width:34px;height:34px;border-radius:50%;object-fit:cover;border:1px solid var(--border);background:var(--card-h);display:flex;align-items:center;justify-content:center;font-size:16px}
+.str-badge{font-size:12px;font-weight:600;color:var(--str);background:rgba(251,191,36,.12);border:1px solid rgba(251,191,36,.25);padding:4px 10px;border-radius:20px;display:flex;align-items:center;gap:4px;text-shadow:0 0 10px var(--str-g)}
+#main{padding-top:58px;min-height:100vh}.screen{animation:fadeUp .3s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.home{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:calc(100vh - 58px);padding:40px 20px;text-align:center}
+.h-fire{font-size:56px;animation:bobble 3s ease-in-out infinite;filter:drop-shadow(0 0 20px rgba(255,85,0,.5));margin-bottom:8px}
+@keyframes bobble{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-14px) rotate(3deg)}}
+.h-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(54px,12vw,110px);line-height:.95;background:linear-gradient(135deg,#ff5500,#ff2e60 50%,#ff8c00);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;filter:drop-shadow(0 0 30px rgba(255,85,0,.4));margin-bottom:8px}
+.h-sub{font-size:14px;color:var(--muted);font-weight:500;letter-spacing:.08em;text-transform:uppercase;margin-bottom:28px}
+.h-stats,.r-grid,.sg{display:grid;grid-template-columns:repeat(4,minmax(92px,1fr));gap:12px;margin-bottom:28px;width:100%;max-width:680px}
+.h-stat,.r-card,.sc{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;text-align:center}
+.h-sn,.r-cn,.scn{font-family:'Bebas Neue',sans-serif;font-size:34px;letter-spacing:.05em;line-height:1}
+.h-sl,.r-cl,.scl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-top:4px}
+.cook-meter{width:100%;max-width:420px;margin:0 auto 28px}.cm-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-size:13px;font-weight:600}
+.cm-out{height:10px;background:rgba(255,255,255,.07);border-radius:5px;overflow:hidden}.cm-in{height:100%;border-radius:5px;transition:width 1s ease,background 1s ease}
+.h-acts{display:flex;flex-direction:column;align-items:center;gap:10px;width:100%;max-width:330px}.h-row{display:flex;gap:10px;width:100%}.h-row .btn{flex:1}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:13px 22px;border:none;border-radius:var(--r);font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;outline:none;text-decoration:none;line-height:1}
+.btn-fire{background:linear-gradient(135deg,var(--fire),var(--fire2));color:#fff;box-shadow:0 4px 20px var(--fire-g)}.btn-fire:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(255,85,0,.45)}
+.btn-ghost{background:rgba(255,255,255,.05);border:1px solid var(--border);color:var(--text)}.btn-ghost:hover{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.15)}
+.btn-lg{padding:15px 38px;font-size:16px;border-radius:16px}.btn-sm{padding:8px 12px;font-size:12px;border-radius:8px}.btn-full{width:100%}
+.page{max-width:920px;margin:0 auto;padding:36px 20px}.pg-title{font-family:'Bebas Neue',sans-serif;font-size:38px;letter-spacing:.05em;margin-bottom:6px}.pg-sub{color:var(--muted);font-size:13px;margin-bottom:24px}
+.topic-grid,.bg-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(255px,1fr));gap:14px;margin-bottom:20px}
+.t-card,.player-card,.bg-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:18px;transition:all .22s;position:relative;overflow:hidden}
+.t-card{cursor:pointer}.t-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--tc,var(--fire));opacity:.85}
+.t-card:hover,.player-card:hover{transform:translateY(-3px);border-color:rgba(255,255,255,.15);background:var(--card-h);box-shadow:0 8px 28px rgba(0,0,0,.3)}
+.t-hdr,.mi-hdr{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}.t-name{font-size:14px;font-weight:700;line-height:1.3;margin-bottom:4px}.t-desc{font-size:11px;color:var(--muted);margin-bottom:12px}
+.t-stats{display:flex;gap:10px;font-size:11px;color:var(--muted)}.boss-card{grid-column:1/-1;background:linear-gradient(135deg,rgba(255,85,0,.13),rgba(255,46,96,.13));border:1px solid rgba(255,85,0,.3);border-radius:var(--r);padding:20px;cursor:pointer;text-align:center;transition:all .22s;display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap}
+.boss-title{font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--fire);letter-spacing:.05em}.boss-desc{font-size:13px;color:var(--muted)}
+.quiz{max-width:660px;margin:0 auto;padding:20px 18px}.q-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}.q-tlbl{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.07em}.q-cnt{font-size:11px;color:var(--muted)}
+.q-prog,.timer-bar{height:4px;background:rgba(255,255,255,.07);border-radius:2px;margin-bottom:16px;overflow:hidden}.q-pfill,.timer-fill{height:100%;background:linear-gradient(90deg,var(--fire),var(--fire2));border-radius:2px;transition:width .5s ease}
+.q-card{background:var(--card);border:1.5px solid var(--border);border-radius:20px;padding:28px 24px;margin-bottom:18px;min-height:110px;display:flex;align-items:center;justify-content:center;transition:border-color .25s,box-shadow .25s}
+.q-card.ok{border-color:var(--ok);box-shadow:0 0 28px var(--ok-g)}.q-card.err{border-color:var(--err);box-shadow:0 0 28px var(--err-g);animation:shake .5s ease}
+@keyframes shake{0%,100%{transform:translateX(0)}15%{transform:translateX(-8px)}30%{transform:translateX(8px)}45%{transform:translateX(-6px)}60%{transform:translateX(6px)}75%{transform:translateX(-3px)}90%{transform:translateX(3px)}}
+.q-text{font-size:17px;font-weight:500;line-height:1.55;text-align:center;color:var(--text)}.opts{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:18px}
+.opt{background:var(--card);border:1.5px solid var(--border);border-radius:var(--r);padding:13px 14px;cursor:pointer;text-align:left;font-family:'Outfit',sans-serif;font-size:13px;font-weight:500;color:var(--text);transition:all .18s;display:flex;align-items:center;gap:9px;min-height:52px;line-height:1.3}
+.opt:hover:not(:disabled){background:var(--card-h);border-color:rgba(255,255,255,.18);transform:translateY(-2px)}.opt:disabled{cursor:default}.opt.hit{background:rgba(34,197,94,.15);border-color:var(--ok);color:var(--ok);box-shadow:0 0 14px var(--ok-g)}.opt.miss{background:rgba(239,68,68,.15);border-color:var(--err);color:var(--err);box-shadow:0 0 14px var(--err-g)}.opt.show{background:rgba(34,197,94,.08);border-color:rgba(34,197,94,.4);color:var(--ok)}
+.okey{width:22px;height:22px;border-radius:5px;background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--muted);flex-shrink:0}
+.fb-box{padding:14px 16px;border-radius:var(--r);margin-bottom:14px;font-size:13px;line-height:1.5;display:none}.fb-box.ok{background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.3);color:#86efac;display:block}.fb-box.err{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);color:#fca5a5;display:block}
+.results{max-width:660px;margin:0 auto;padding:36px 20px}.r-big{font-family:'Bebas Neue',sans-serif;font-size:80px;letter-spacing:.04em;line-height:1;background:linear-gradient(135deg,var(--str),var(--fire));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-align:center;margin-bottom:6px}.r-sub{text-align:center;color:var(--muted);font-size:14px;margin-bottom:28px}.r-acts{display:flex;flex-direction:column;gap:10px}
+.mlist{display:flex;flex-direction:column;gap:10px;margin-bottom:24px}.mi{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:14px 18px}.mi-name{font-size:13px;font-weight:600;display:flex;align-items:center;gap:10px}.mi-pct{font-size:12px;font-weight:700}.mb-out{height:7px;background:rgba(255,255,255,.07);border-radius:4px;overflow:hidden}.mb-in{height:100%;border-radius:4px;transition:width .9s ease}
+.bg-card{text-align:center}.bg-card.earned{border-color:var(--str);box-shadow:0 0 18px rgba(251,191,36,.18)}.bg-card.locked{opacity:.35}.bg-em{font-size:32px;margin-bottom:9px}.bg-name{font-size:12px;font-weight:700;margin-bottom:4px}.bg-desc{font-size:10px;color:var(--muted);line-height:1.4}
+.form{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:18px;margin-bottom:22px}.field{width:100%;margin-bottom:10px;padding:13px;border-radius:var(--r);border:1px solid var(--border);background:#11101d;color:var(--text);font-family:inherit;font-size:14px}.file{width:100%;margin-bottom:12px;color:var(--muted)}
+.sec-title{font-size:17px;font-weight:700;margin-bottom:14px}.divider{height:1px;background:var(--border);margin:22px 0}.back-btn{display:inline-flex;align-items:center;gap:6px;color:var(--muted);font-size:13px;font-weight:500;cursor:pointer;margin-bottom:20px;transition:color .2s;background:none;border:none;font-family:'Outfit',sans-serif}.back-btn:hover{color:var(--text)}
+.tag{display:inline-block;font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;text-transform:uppercase;letter-spacing:.05em}.xpf{position:fixed;font-family:'Bebas Neue',sans-serif;font-size:22px;font-weight:700;color:var(--str);text-shadow:0 0 15px var(--str-g);pointer-events:none;z-index:9999;animation:xpfa 1.4s ease-out forwards}
+@keyframes xpfa{0%{opacity:1;transform:translateY(0) scale(1)}20%{transform:translateY(-18px) scale(1.25)}100%{opacity:0;transform:translateY(-80px) scale(.8)}}.toast{position:fixed;bottom:24px;right:24px;background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:12px 18px;font-size:13px;font-weight:500;z-index:9997;display:flex;align-items:center;gap:9px;box-shadow:0 8px 28px rgba(0,0,0,.4);animation:fadeUp .3s ease,toastOut .3s ease 2.7s forwards;max-width:300px}
+@keyframes toastOut{to{opacity:0;transform:translateY(8px)}}.combo{position:fixed;top:45%;left:50%;transform:translate(-50%,-50%);font-family:'Bebas Neue',sans-serif;font-size:56px;text-align:center;pointer-events:none;z-index:9998;letter-spacing:.06em;animation:comboPop 1.3s ease-out forwards}
+@keyframes comboPop{0%{opacity:0;transform:translate(-50%,-50%) scale(.2)}20%{opacity:1;transform:translate(-50%,-50%) scale(1.15)}55%{opacity:1;transform:translate(-50%,-50%) scale(1)}100%{opacity:0;transform:translate(-50%,-60%) scale(.9)}}.lup{position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:10000;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;animation:fadeUp .3s ease;padding:40px}.lup-title{font-family:'Bebas Neue',sans-serif;font-size:70px;background:linear-gradient(135deg,var(--str),var(--fire));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:.05em}.lup-name{font-size:20px;font-weight:600;margin:6px 0 8px}.lup-desc{font-size:14px;color:var(--muted);margin-bottom:28px}
+.adventure-top{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px}.hero-panel,.quest-panel{background:linear-gradient(135deg,rgba(255,85,0,.12),rgba(99,102,241,.12));border:1px solid var(--border);border-radius:var(--r);padding:18px;min-height:150px}.hero-creature{display:flex;align-items:center;gap:14px}.big-sprite{width:86px;height:86px;border-radius:18px;background:rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;font-size:54px;box-shadow:inset 0 0 0 1px var(--border),0 14px 36px rgba(0,0,0,.25)}.hero-name{font-size:18px;font-weight:800;margin-bottom:5px}.hero-meta{color:var(--muted);font-size:12px;line-height:1.5}.coin-pill{display:inline-flex;align-items:center;gap:6px;color:var(--str);border:1px solid rgba(251,191,36,.28);background:rgba(251,191,36,.1);border-radius:999px;padding:5px 10px;font-size:12px;font-weight:700;margin-top:10px}.world-map{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px}.zone{position:relative;min-height:168px;border-radius:18px;padding:18px;background:linear-gradient(145deg,var(--z1),var(--z2));border:1px solid rgba(255,255,255,.12);overflow:hidden;cursor:pointer;transition:transform .22s,box-shadow .22s,border-color .22s}.zone::before{content:'';position:absolute;inset:-50%;background:radial-gradient(circle at 30% 20%,rgba(255,255,255,.18),transparent 28%);opacity:.6}.zone:hover{transform:translateY(-4px);box-shadow:0 16px 42px rgba(0,0,0,.32);border-color:rgba(255,255,255,.24)}.zone-icon{position:relative;font-size:42px;margin-bottom:12px}.zone-title{position:relative;font-size:15px;font-weight:800;margin-bottom:6px}.zone-copy{position:relative;font-size:12px;color:rgba(255,255,255,.75);line-height:1.4}.zone-progress{position:relative;margin-top:14px;height:7px;background:rgba(0,0,0,.28);border-radius:999px;overflow:hidden}.zone-fill{height:100%;background:rgba(255,255,255,.78);border-radius:999px}.starter-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px}.starter{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:18px;text-align:center;cursor:pointer;transition:all .22s}.starter:hover{transform:translateY(-3px);border-color:var(--fire);box-shadow:0 12px 28px var(--fire-g)}.starter .big-sprite{margin:0 auto 12px}.battle-arena{max-width:900px;margin:0 auto;padding:24px 18px}.battle-stage{position:relative;min-height:320px;border-radius:22px;padding:22px;background:linear-gradient(180deg,#17162a,#0f0e1a 52%,#151321);border:1px solid var(--border);overflow:hidden;margin-bottom:16px}.battle-stage::before{content:'';position:absolute;left:8%;right:8%;bottom:44px;height:86px;border-radius:50%;background:radial-gradient(ellipse,rgba(34,197,94,.18),transparent 70%)}.fighter{position:absolute;display:flex;flex-direction:column;gap:8px}.fighter.enemy{top:28px;right:34px;align-items:flex-end}.fighter.player{left:34px;bottom:24px}.sprite{width:112px;height:112px;border-radius:24px;background:rgba(255,255,255,.07);display:flex;align-items:center;justify-content:center;font-size:70px;box-shadow:inset 0 0 0 1px var(--border),0 20px 45px rgba(0,0,0,.32);animation:idle 2.6s ease-in-out infinite}.enemy .sprite{animation-delay:.5s}.sprite.hit{animation:hitFlash .36s ease}.sprite.attack{animation:attackLunge .42s ease}@keyframes idle{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}@keyframes hitFlash{0%,100%{filter:none;transform:translateX(0)}40%{filter:brightness(1.8);transform:translateX(-10px)}}@keyframes attackLunge{0%,100%{transform:translateX(0)}50%{transform:translateX(16px) scale(1.06)}}.hp-card{min-width:210px;background:rgba(7,6,12,.78);border:1px solid var(--border);border-radius:12px;padding:10px 12px;backdrop-filter:blur(12px)}.hp-row{display:flex;justify-content:space-between;gap:10px;font-size:12px;font-weight:800;margin-bottom:6px}.hp-bar{height:9px;background:rgba(255,255,255,.09);border-radius:999px;overflow:hidden}.hp-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--ok),#84cc16);transition:width .35s ease}.battle-dialogue{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;margin-bottom:14px;font-size:14px;line-height:1.5}.battle-question{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:20px;margin-bottom:14px}.battle-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}.reward-box{text-align:center;background:var(--card);border:1px solid var(--border);border-radius:20px;padding:28px;margin:22px auto;max-width:620px}.reward-sprite{font-size:76px;margin-bottom:10px}.reward-title{font-family:'Bebas Neue',sans-serif;font-size:58px;letter-spacing:.04em;background:linear-gradient(135deg,var(--str),var(--fire));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}.mini-shop{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-top:14px}.shop-item{background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:var(--r);padding:14px;text-align:center}
+.raven-icon{width:64px;height:64px;margin:0 auto 10px;background-image:url("assets/raven-icons/raven-icons-64.png");background-repeat:no-repeat;image-rendering:pixelated;filter:drop-shadow(0 8px 18px rgba(0,0,0,.35));transform:scale(1.35);transform-origin:center}.raven-inline{width:32px;height:32px;background-image:url("assets/raven-icons/raven-icons-64.png");background-size:512px 4384px;background-repeat:no-repeat;image-rendering:pixelated;display:inline-block;vertical-align:middle;margin-right:6px}.icon-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(118px,1fr));gap:12px}.icon-tile{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:16px 10px;text-align:center}.icon-label{font-size:11px;color:var(--muted);margin-top:14px}
+.world-shell{max-width:980px;margin:0 auto;padding:22px 14px}.world-hud{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px;flex-wrap:wrap}.world-wrap{background:#0b0a13;border:1px solid var(--border);border-radius:18px;padding:14px;box-shadow:0 18px 50px rgba(0,0,0,.36);overflow:auto}.tile-map{--tile:42px;display:grid;grid-template-columns:repeat(16,var(--tile));grid-template-rows:repeat(11,var(--tile));gap:0;position:relative;width:calc(16 * var(--tile));height:calc(11 * var(--tile));margin:0 auto;image-rendering:pixelated}.tile{width:var(--tile);height:var(--tile);position:relative;background:#213f2f}.tile.grass{background:linear-gradient(135deg,#25573b,#173824)}.tile.path{background:linear-gradient(135deg,#8b6a45,#5d422b)}.tile.wall{background:linear-gradient(135deg,#35324a,#211f31)}.tile.water{background:linear-gradient(135deg,#146b8a,#0c3c59)}.tile.floor{background:linear-gradient(135deg,#3b3552,#26223a)}.tile.locked{filter:saturate(.35) brightness(.75)}.tile::after{content:'';position:absolute;inset:0;border:1px solid rgba(255,255,255,.035)}.map-thing{position:absolute;width:var(--tile);height:var(--tile);display:flex;align-items:center;justify-content:center;z-index:4;transition:left .12s linear,top .12s linear}.map-player{z-index:7}.map-player .map-sprite{width:38px;height:38px;border-radius:10px;background:linear-gradient(180deg,#ffd479,#ff7a35);box-shadow:0 4px 0 #66331c,0 12px 18px rgba(0,0,0,.28);position:relative}.map-player .map-sprite::before{content:'';position:absolute;left:9px;top:6px;width:20px;height:14px;border-radius:12px 12px 7px 7px;background:#24182f}.map-player .map-sprite::after{content:'';position:absolute;left:8px;top:20px;width:22px;height:14px;border-radius:6px;background:#3b82f6}.map-npc{cursor:pointer}.map-npc .map-sprite{width:38px;height:38px;border-radius:10px;background:var(--npc,#ff5500);display:flex;align-items:center;justify-content:center;font-size:22px;box-shadow:0 5px 0 rgba(0,0,0,.26),0 12px 18px rgba(0,0,0,.28)}.map-item{z-index:5}.map-label{position:absolute;left:50%;top:-19px;transform:translateX(-50%);white-space:nowrap;font-size:10px;font-weight:800;background:rgba(7,6,12,.86);border:1px solid var(--border);border-radius:999px;padding:2px 7px;color:var(--text);pointer-events:none}.world-dialogue{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:13px 15px;margin-top:12px;font-size:13px;line-height:1.45}.dpad{display:none;grid-template-columns:44px 44px 44px;grid-template-rows:44px 44px 44px;gap:6px;justify-content:center;margin-top:14px}.dpad button{border:1px solid var(--border);background:var(--card);color:var(--text);border-radius:10px;font-weight:800}.dpad .up{grid-column:2}.dpad .left{grid-column:1;grid-row:2}.dpad .act{grid-column:2;grid-row:2;background:linear-gradient(135deg,var(--fire),var(--fire2))}.dpad .right{grid-column:3;grid-row:2}.dpad .down{grid-column:2;grid-row:3}
+.world-wrap{overflow:hidden;max-width:calc(var(--vieww,11) * var(--tile,56px) + 28px);margin:0 auto;background:linear-gradient(180deg,#7ccf78 0%,#e7c77a 68%,#3fa4c9 100%);border:2px solid rgba(255,255,255,.12);box-shadow:0 22px 55px rgba(0,0,0,.42),inset 0 0 0 4px rgba(0,0,0,.16)}.world-camera{--tile:56px;--vieww:11;--viewh:8;position:relative;width:calc(var(--vieww) * var(--tile));height:calc(var(--viewh) * var(--tile));overflow:hidden;margin:0 auto;border-radius:14px;background:#67bd61;box-shadow:inset 0 0 0 2px rgba(255,255,255,.08)}.tile-map{grid-template-columns:repeat(30,var(--tile));grid-template-rows:repeat(22,var(--tile));width:calc(30 * var(--tile));height:calc(22 * var(--tile));margin:0;transform:translate(calc(var(--camx,0) * -1 * var(--tile)),calc(var(--camy,0) * -1 * var(--tile)));transition:transform .14s linear;will-change:transform}.tile{width:var(--tile);height:var(--tile);position:relative;background-size:12px 12px,100% 100%}.tile::after{display:none}.tile.grass{background-color:#47a84e;background-image:radial-gradient(circle at 18% 20%,rgba(255,255,255,.13) 0 2px,transparent 3px),linear-gradient(135deg,#4fb35a,#2f8f45)}.tile.grass2{background-image:radial-gradient(circle at 70% 72%,rgba(255,255,255,.12) 0 2px,transparent 3px),linear-gradient(135deg,#5abc57,#36954a)}.tile.flowers{background-color:#4caf52;background-image:radial-gradient(circle at 28% 35%,#ffd35a 0 2px,transparent 3px),radial-gradient(circle at 68% 65%,#f472b6 0 2px,transparent 3px),linear-gradient(135deg,#52b958,#359447)}.tile.path{background-color:#b1824d;background-image:radial-gradient(circle at 22% 28%,rgba(74,43,24,.25) 0 2px,transparent 3px),linear-gradient(135deg,#b98b53,#8c623a)}.tile.path2{background-image:radial-gradient(circle at 68% 48%,rgba(74,43,24,.25) 0 2px,transparent 3px),linear-gradient(135deg,#c0925d,#93683e)}.tile.sand{background-color:#e3c678;background-image:radial-gradient(circle at 30% 30%,rgba(255,255,255,.2) 0 2px,transparent 3px),linear-gradient(135deg,#ebd18a,#d6b464)}.tile.shore{background:linear-gradient(135deg,#e8cf8a 0 52%,#55b7d0 54% 100%)}.tile.water{background-color:#2b98c4;background-image:radial-gradient(ellipse at 65% 35%,rgba(255,255,255,.25) 0 8px,transparent 9px),linear-gradient(135deg,#46b9d1,#1477aa)}.tile.floor{background-color:#7b6aae;background-image:linear-gradient(135deg,#8878bd,#675997)}.tile.wall{background-color:#2b3345;background-image:linear-gradient(135deg,#374257,#202838)}.map-thing{transition:left .13s linear,top .13s linear}.map-player{z-index:9}.map-npc{z-index:8}.map-item{z-index:5}.map-label{top:-22px;font-size:10px;border-color:rgba(255,255,255,.16);box-shadow:0 4px 12px rgba(0,0,0,.25)}.map-item .raven-icon{transform:scale(.58);margin:0}.char-sprite{width:100px;height:100px;background-repeat:no-repeat;background-position:0 0;image-rendering:pixelated;transform-origin:center bottom}.select-char{transform:scale(2.05)}.map-char{transform:scale(1.72);margin-top:-64px}.battle-char{transform:scale(3.08)}.fighter.enemy .battle-char{transform:scaleX(-1) scale(3.08)}.class-preview{width:172px;height:150px;overflow:hidden;background:linear-gradient(180deg,#82d37b,#4da85b 58%,#c99b59 59%);border-radius:16px}.starter{background:linear-gradient(180deg,#24223a,#171527);border-color:rgba(255,255,255,.13);box-shadow:0 12px 28px rgba(0,0,0,.22)}.starter:hover{box-shadow:0 18px 38px rgba(255,85,0,.28)}.map-player .map-sprite,.map-npc .map-sprite{background:none;box-shadow:none;border-radius:0;width:100px;height:100px;overflow:visible}.map-player .map-sprite::before,.map-player .map-sprite::after{display:none}.wood-prop{width:70px;height:70px;background-image:url("assets/tiles/woods.png");background-repeat:no-repeat;background-size:352px 192px;image-rendering:pixelated;filter:drop-shadow(0 8px 10px rgba(0,0,0,.28));transform:scale(1.2)}.wood-tree{background-position:0 0}.wood-big{background-position:-144px 0}.wood-rock{background-position:-224px -68px;width:42px;height:42px;transform:scale(1.25)}.battle-stage{min-height:390px;background:linear-gradient(180deg,#82d6ff 0 28%,#3b9b58 29% 54%,#6ec45f 55% 74%,#e1bf75 75% 100%);border:2px solid rgba(255,255,255,.12);box-shadow:0 18px 48px rgba(0,0,0,.36),inset 0 0 0 4px rgba(0,0,0,.12)}.battle-stage::before{left:0;right:0;top:82px;bottom:auto;height:96px;border-radius:0;background:radial-gradient(circle at 12% 78%,#2f7c3a 0 26px,transparent 27px),radial-gradient(circle at 26% 64%,#3f9949 0 34px,transparent 35px),radial-gradient(circle at 78% 70%,#2f7c3a 0 30px,transparent 31px),radial-gradient(circle at 92% 82%,#3f9949 0 24px,transparent 25px),linear-gradient(180deg,#2c7f3b,#215f34);opacity:1}.battle-stage::after{content:'';position:absolute;left:0;right:0;bottom:0;height:34%;background:radial-gradient(ellipse at 25% 58%,rgba(255,255,255,.18) 0 18px,transparent 19px),radial-gradient(ellipse at 78% 52%,rgba(255,255,255,.16) 0 20px,transparent 21px),linear-gradient(135deg,#d7b66f,#b98245);z-index:0}.fighter{z-index:2}.fighter.player{left:76px;bottom:28px}.fighter.enemy{top:40px;right:78px}.sprite{width:230px;height:205px;border-radius:28px;background:rgba(255,255,255,.08);box-shadow:0 16px 35px rgba(0,0,0,.22),inset 0 0 0 2px rgba(255,255,255,.08);overflow:visible}.hp-card{background:rgba(7,6,12,.86);box-shadow:0 10px 24px rgba(0,0,0,.22)}.battle-dialogue,.battle-question{background:rgba(26,24,40,.95);backdrop-filter:blur(12px)}.special-btn:disabled{opacity:.82;color:var(--str);background:rgba(251,191,36,.06)}.soldier-idle{background-image:url("assets/characters/soldier-idle.png");animation:soldierIdle .8s steps(6) infinite}.soldier-walk{background-image:url("assets/characters/soldier-walk.png");animation:soldierWalk .75s steps(8) infinite}.soldier-sword{background-image:url("assets/characters/soldier-attack-sword.png");animation:soldierAttack6 .52s steps(6) infinite}.soldier-mage{background-image:url("assets/characters/soldier-attack-mage.png");animation:soldierAttack6 .52s steps(6) infinite}.soldier-archer{background-image:url("assets/characters/soldier-attack-archer.png");animation:soldierAttack9 .7s steps(9) infinite}.orc-idle{background-image:url("assets/characters/orc-idle.png");animation:soldierIdle .9s steps(6) infinite}.orc-attack{background-image:url("assets/characters/orc-attack.png");animation:soldierAttack6 .58s steps(6) infinite}@keyframes soldierIdle{from{background-position:0 0}to{background-position:-600px 0}}@keyframes soldierWalk{from{background-position:0 0}to{background-position:-800px 0}}@keyframes soldierAttack6{from{background-position:0 0}to{background-position:-600px 0}}@keyframes soldierAttack9{from{background-position:0 0}to{background-position:-900px 0}}
+@media(max-width:680px){.h-stats,.r-grid,.sg{grid-template-columns:1fr 1fr}.opts{grid-template-columns:1fr}.topic-grid,.bg-grid{grid-template-columns:1fr}.q-text{font-size:15px}.quiz{padding:14px}.mi-hdr{align-items:flex-start;flex-direction:column}.h-row{flex-direction:column}}
+@media(max-width:680px){.adventure-top{grid-template-columns:1fr}.battle-stage{min-height:360px}.fighter.enemy{right:18px;top:34px}.fighter.player{left:18px;bottom:26px}.sprite{width:168px;height:150px;font-size:58px}.battle-char{transform:scale(2.18)}.fighter.enemy .battle-char{transform:scaleX(-1) scale(2.18)}.hp-card{min-width:170px}.reward-title{font-size:44px}.tile-map,.world-camera{--tile:42px}.world-wrap{padding:8px}.dpad{display:grid}.class-preview{width:150px;height:138px}.select-char{transform:scale(1.8)}}
+
+/* Polished Cute Fantasy RPG layer */
+.starter-grid{grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}.starter{padding:18px 18px 20px;background:linear-gradient(180deg,#26334b,#171827);border:2px solid rgba(255,255,255,.12)}.class-preview{width:210px;height:168px;margin:0 auto 14px;background:linear-gradient(180deg,#8ad778 0 58%,#d8ad63 59% 100%);box-shadow:inset 0 0 0 3px rgba(0,0,0,.18),0 14px 28px rgba(0,0,0,.28)}.select-char{transform:scale(2.75);margin-top:18px}.class-weapon{position:absolute;right:18px;top:18px;transform:scale(.82)}
+.world-shell{max-width:880px}.world-wrap{--tile:48px;--vieww:13;--viewh:9;max-width:calc(var(--vieww) * var(--tile) + 28px);background:#6bbf63}.world-camera{--tile:48px;--vieww:13;--viewh:9;width:calc(var(--vieww) * var(--tile));height:calc(var(--viewh) * var(--tile));background:#65ba5d}.tile-map{--tile:48px;display:grid;grid-template-columns:repeat(30,var(--tile));grid-template-rows:repeat(22,var(--tile));width:calc(30 * var(--tile));height:calc(22 * var(--tile));transition:none;will-change:transform}.tile{width:var(--tile);height:var(--tile);background-size:cover;image-rendering:pixelated}.tile.grass,.tile.grass2,.tile.flowers{background-image:url("assets/cute-fantasy/tiles/Grass_Middle.png");background-size:48px 48px;background-color:#62b95b}.tile.flowers::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 25% 30%,#fff6a3 0 2px,transparent 3px),radial-gradient(circle at 70% 68%,#ff9ed1 0 2px,transparent 3px)}.tile.path,.tile.path2{background-image:url("assets/cute-fantasy/tiles/Path_Middle.png");background-size:48px 48px}.tile.sand,.tile.shore{background-image:url("assets/cute-fantasy/tiles/Beach_Tile.png");background-size:80px 48px;background-color:#e8c879}.tile.water{background-image:url("assets/cute-fantasy/tiles/Water_Middle.png");background-size:48px 48px}.tile.floor{background-image:url("assets/cute-fantasy/tiles/FarmLand_Tile.png");background-size:48px 48px;background-color:#a7784d}.tile.wall{background:#314356}.map-thing.free-entity{width:48px;height:48px;transform:translate(-50%,-72%);transition:none}.map-player{z-index:20}.map-npc{z-index:18}.map-decor{position:absolute;z-index:10;image-rendering:pixelated;pointer-events:none}.map-decor.tree{width:96px;height:120px;transform:translate(-50%,-86%)}.map-decor.small-tree{width:96px;height:48px;transform:translate(-50%,-60%)}.map-decor.house{width:144px;height:192px;transform:translate(-50%,-78%);z-index:12}.map-decor.fence{width:96px;height:96px;transform:translate(-50%,-50%);z-index:11}.map-decor.crops{width:112px;height:192px;object-fit:none;object-position:0 0;transform:translate(-50%,-50%) scale(.65);z-index:11}.map-decor.rock{width:42px;height:42px;transform:translate(-50%,-50%);z-index:11}.map-sprite{overflow:visible!important}.cute-player,.cute-enemy{width:32px;height:32px;background-repeat:no-repeat;background-position:0 0;image-rendering:pixelated;transform-origin:center bottom}.cute-player{background-image:url("assets/cute-fantasy/characters/Player.png");animation:cuteWalk .7s steps(6) infinite}.cute-player.idle{animation:cuteIdle .9s steps(6) infinite}.cute-skeleton{background-image:url("assets/cute-fantasy/enemies/Skeleton.png");animation:cuteIdle .9s steps(6) infinite}.cute-slime{width:64px;height:64px;background-image:url("assets/cute-fantasy/enemies/Slime_Green.png");animation:slimeIdle .9s steps(8) infinite}.cute-orc{width:100px;height:100px;background-image:url("assets/characters/orc-idle.png");animation:soldierIdle .9s steps(6) infinite}.cute-orc.attack{background-image:url("assets/characters/orc-attack.png");animation:soldierAttack6 .6s steps(6) infinite}.map-char-cute{transform:scale(2.2)}.map-char-slime{transform:scale(1.45)}.battle-char-cute{transform:scale(4.4)}.battle-char-slime{transform:scale(2.7)}.battle-char-orc{transform:scale(2.45)}@keyframes cuteIdle{from{background-position:0 0}to{background-position:-192px 0}}@keyframes cuteWalk{from{background-position:0 -64px}to{background-position:-192px -64px}}@keyframes slimeIdle{from{background-position:0 0}to{background-position:-512px 0}}
+.battle-stage.polished-battle{min-height:430px;padding:0;background:linear-gradient(180deg,#72d7ff 0 27%,#5ca95a 28% 53%,#7ac95d 54% 72%,#d6b06b 73% 100%);border:3px solid #d9b765;overflow:hidden}.battle-stage.polished-battle::before{top:82px;height:128px;background:radial-gradient(circle at 10% 70%,#2d7a3c 0 34px,transparent 35px),radial-gradient(circle at 22% 56%,#3d984a 0 44px,transparent 45px),radial-gradient(circle at 78% 60%,#327d3e 0 38px,transparent 39px),radial-gradient(circle at 92% 70%,#4aa254 0 34px,transparent 35px),linear-gradient(180deg,#2d8140,#1f6735)}.battle-stage.polished-battle::after{height:34%;background:radial-gradient(ellipse at 25% 62%,rgba(255,255,255,.18) 0 24px,transparent 25px),radial-gradient(ellipse at 76% 60%,rgba(255,255,255,.17) 0 24px,transparent 25px),linear-gradient(135deg,#d9b96f,#bd8548)}.battle-side{position:absolute;z-index:4;display:flex;flex-direction:column;gap:12px;align-items:center}.battle-side.player-side{left:64px;bottom:30px}.battle-side.enemy-side{right:64px;top:42px}.battle-side .hp-card{min-width:230px;order:1}.battle-side.enemy-side .hp-card{order:0}.battle-platform{width:250px;height:150px;border-radius:34px;background:rgba(255,255,255,.16);box-shadow:inset 0 0 0 2px rgba(255,255,255,.08),0 18px 28px rgba(0,0,0,.16);display:flex;align-items:flex-end;justify-content:center;overflow:visible}.battle-side.enemy-side .battle-platform{width:230px;height:140px}.battle-entity{width:120px;height:120px;display:flex;align-items:flex-end;justify-content:center;overflow:visible}.battle-side.enemy-side .battle-entity{transform:scaleX(-1)}.weapon-pill{display:inline-flex;gap:6px;align-items:center;color:var(--str);border:1px solid rgba(251,191,36,.35);background:rgba(251,191,36,.1);padding:5px 9px;border-radius:999px;font-size:11px;font-weight:800}
+@media(max-width:680px){.world-wrap,.world-camera{--tile:42px;--vieww:9;--viewh:8}.map-char-cute{transform:scale(1.9)}.battle-stage.polished-battle{min-height:360px}.battle-side.player-side{left:18px;bottom:24px}.battle-side.enemy-side{right:18px;top:30px}.battle-platform{width:170px;height:118px}.battle-side.enemy-side .battle-platform{width:158px;height:108px}.battle-char-cute{transform:scale(3.1)}.battle-char-slime{transform:scale(2)}.battle-char-orc{transform:scale(1.8)}.battle-side .hp-card{min-width:170px}.class-preview{width:176px;height:150px}.select-char{transform:scale(2.35)}}
+/* Final RPG polish overrides */
+.world-shell{max-width:920px}
+.world-hud{gap:10px;align-items:center;flex-wrap:wrap}
+.world-wrap{--tile:48px;--vieww:13;--viewh:9;margin:0 auto;border:2px solid rgba(255,255,255,.14);border-radius:18px;padding:10px;background:#121523;box-shadow:0 20px 46px rgba(0,0,0,.35)}
+.world-camera{position:relative;overflow:hidden;width:calc(var(--vieww) * var(--tile));height:calc(var(--viewh) * var(--tile));border-radius:12px;background:#6ebd65}
+.tile-map{position:absolute;left:0;top:0;display:grid;grid-template-columns:repeat(36,var(--tile));grid-template-rows:repeat(26,var(--tile));width:calc(36 * var(--tile));height:calc(26 * var(--tile));transition:none;will-change:transform}
+.tile{position:relative;width:var(--tile);height:var(--tile);image-rendering:pixelated;background-size:var(--tile) var(--tile)}
+.tile.grass,.tile.grass2,.tile.flowers{background-image:url("assets/cute-fantasy/tiles/Grass_Middle.png");background-color:#63b85e}
+.tile.path,.tile.path2{background-image:url("assets/cute-fantasy/tiles/Path_Middle.png");background-color:#ba8b56}
+.tile.sand,.tile.shore{background-image:url("assets/cute-fantasy/tiles/Beach_Tile.png");background-size:80px 48px;background-color:#dfc477}
+.tile.water{background-image:url("assets/cute-fantasy/tiles/Water_Middle.png");background-color:#41a5d8;animation:waterShift 1.4s steps(2) infinite}
+.tile.floor{background-image:url("assets/cute-fantasy/tiles/FarmLand_Tile.png");background-color:#9f7349}
+.tile.wall{background:#34506a}
+.tile.flowers::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 24% 34%,#fff3a2 0 2px,transparent 3px),radial-gradient(circle at 72% 62%,#ff91cf 0 2px,transparent 3px),radial-gradient(circle at 52% 20%,#f7ffff 0 1px,transparent 2px)}
+@keyframes waterShift{from{filter:brightness(1)}to{filter:brightness(1.12)}}
+.map-thing{position:absolute;display:flex;align-items:center;justify-content:center;pointer-events:auto}
+.map-thing.free-entity{width:48px;height:48px;transform:translate(-50%,-75%);transition:none}
+.map-player{z-index:40}.map-npc{z-index:32;cursor:pointer}.map-item{z-index:24;transform:translate(-50%,-50%) scale(.55)}
+.map-label{position:absolute;left:50%;bottom:calc(100% + 4px);transform:translateX(-50%);white-space:nowrap;background:rgba(7,6,12,.82);border:1px solid rgba(255,255,255,.16);border-radius:999px;color:#fff;font-size:10px;font-weight:800;padding:4px 8px;text-shadow:0 1px 0 rgba(0,0,0,.4)}
+.map-decor{position:absolute;z-index:14;image-rendering:pixelated;pointer-events:none;transform:translate(-50%,-75%)}
+.map-decor.tree{width:96px;height:120px}.map-decor.small-tree{width:88px;height:54px;transform:translate(-50%,-55%)}.map-decor.house{width:144px;height:192px;z-index:18}.map-decor.fence{width:96px;height:96px;transform:translate(-50%,-54%);z-index:20}.map-decor.crops{width:112px;height:96px;object-fit:none;object-position:0 0;transform:translate(-50%,-52%) scale(.72);z-index:15}.map-decor.tower{width:96px;height:120px;filter:hue-rotate(185deg) saturate(1.2);z-index:17}
+.cute-player,.cute-enemy{width:32px;height:32px;background-repeat:no-repeat;background-position:0 0;image-rendering:pixelated;transform-origin:center bottom}
+.cute-player{background-image:url("assets/cute-fantasy/characters/Player.png");animation:cuteWalk .7s steps(6) infinite}.cute-player.idle{animation:cuteIdle .9s steps(6) infinite}
+.cute-skeleton{background-image:url("assets/cute-fantasy/enemies/Skeleton.png");animation:cuteIdle .9s steps(6) infinite}.cute-slime{width:64px;height:64px;background-image:url("assets/cute-fantasy/enemies/Slime_Green.png");animation:slimeIdle .9s steps(8) infinite}.cute-orc{width:100px;height:100px;background-image:url("assets/characters/orc-idle.png");animation:soldierIdle .9s steps(6) infinite}.cute-orc.attack{background-image:url("assets/characters/orc-attack.png");animation:soldierAttack6 .55s steps(6) infinite}
+.map-char-cute{transform:scale(2.25)}.map-char-slime{transform:scale(1.42)}.map-char-orc{transform:scale(1.85)}
+.battle-char-cute{transform:scale(4.65)}.battle-char-slime{transform:scale(2.85)}.battle-char-orc{transform:scale(3)}
+@keyframes cuteIdle{from{background-position:0 0}to{background-position:-192px 0}}@keyframes cuteWalk{from{background-position:0 -64px}to{background-position:-192px -64px}}@keyframes slimeIdle{from{background-position:0 0}to{background-position:-512px 0}}
+.starter-grid{grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}.starter{padding:18px 18px 20px;background:linear-gradient(180deg,#26334b,#171827);border:2px solid rgba(255,255,255,.12)}.class-preview{position:relative;width:210px;height:168px;margin:0 auto 14px;border-radius:16px;background:linear-gradient(180deg,#8ad778 0 58%,#d8ad63 59% 100%);box-shadow:inset 0 0 0 3px rgba(0,0,0,.18),0 14px 28px rgba(0,0,0,.28);overflow:hidden}.select-char{transform:scale(2.85);margin-top:22px}.class-weapon{position:absolute;right:16px;top:14px;transform:scale(.78)}
+.battle-stage.polished-battle{position:relative;min-height:430px;padding:0;background:linear-gradient(180deg,#75d9ff 0 26%,#2f8440 27% 50%,#7ccd61 51% 72%,#d8b26b 73% 100%);border:3px solid #d7b765;border-radius:18px;overflow:hidden;margin-bottom:16px}
+.battle-stage.polished-battle::before{content:'';position:absolute;left:0;right:0;top:86px;height:125px;background:radial-gradient(circle at 10% 70%,#2d7a3c 0 34px,transparent 35px),radial-gradient(circle at 24% 55%,#419a4b 0 46px,transparent 47px),radial-gradient(circle at 78% 62%,#327d3e 0 40px,transparent 41px),radial-gradient(circle at 92% 70%,#4da856 0 34px,transparent 35px),linear-gradient(180deg,#2f8740,#1f6735)}
+.battle-stage.polished-battle::after{content:'';position:absolute;left:0;right:0;bottom:0;height:34%;background:radial-gradient(ellipse at 25% 62%,rgba(255,255,255,.20) 0 25px,transparent 26px),radial-gradient(ellipse at 76% 60%,rgba(255,255,255,.18) 0 25px,transparent 26px),linear-gradient(135deg,#d9b96f,#bd8548)}
+.battle-side{position:absolute;z-index:4;display:flex;flex-direction:column;gap:12px;align-items:center}.battle-side.player-side{left:64px;bottom:30px}.battle-side.enemy-side{right:64px;top:42px}.battle-side .hp-card{min-width:230px;order:1}.battle-side.enemy-side .hp-card{order:0}.battle-platform{width:250px;height:150px;border-radius:34px;background:rgba(255,255,255,.16);box-shadow:inset 0 0 0 2px rgba(255,255,255,.08),0 18px 28px rgba(0,0,0,.16);display:flex;align-items:flex-end;justify-content:center;overflow:visible}.battle-side.enemy-side .battle-platform{width:230px;height:140px}.battle-entity{width:120px;height:120px;display:flex;align-items:flex-end;justify-content:center;overflow:visible}.battle-side.enemy-side .battle-entity{transform:scaleX(-1)}
+.weapon-pill{display:inline-flex;gap:6px;align-items:center;color:var(--str);border:1px solid rgba(251,191,36,.35);background:rgba(251,191,36,.1);padding:5px 9px;border-radius:999px;font-size:11px;font-weight:800}.weapon-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}.weapon-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:16px;text-align:center}.weapon-card.equipped{border-color:var(--str);box-shadow:0 0 18px rgba(251,191,36,.18)}.weapon-card.locked{opacity:.45}.cute-skeleton{width:32px;height:32px;background-repeat:no-repeat}
+@media(max-width:680px){.world-wrap,.world-camera{--tile:42px;--vieww:9;--viewh:8}.tile-map{grid-template-columns:repeat(36,var(--tile));grid-template-rows:repeat(26,var(--tile));width:calc(36 * var(--tile));height:calc(26 * var(--tile))}.map-char-cute{transform:scale(1.95)}.battle-stage.polished-battle{min-height:360px}.battle-side.player-side{left:18px;bottom:24px}.battle-side.enemy-side{right:18px;top:30px}.battle-platform{width:170px;height:118px}.battle-side.enemy-side .battle-platform{width:158px;height:108px}.battle-char-cute{transform:scale(3.15)}.battle-char-slime{transform:scale(2.05)}.battle-char-orc{transform:scale(1.8)}.battle-side .hp-card{min-width:170px}.class-preview{width:176px;height:150px}.select-char{transform:scale(2.35)}}
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="hdr">
+    <span class="h-logo" onclick="showHome()">notthatcooked</span>
+    <div class="h-xp">
+      <div class="h-lrow">
+        <span class="h-lvl" id="h-lvl">Lvl 1</span>
+        <span class="h-xplbl" id="h-xplbl">0 / 150 XP</span>
+      </div>
+      <div class="xp-out"><div class="xp-in" id="xp-in" style="width:0%"></div></div>
+    </div>
+    <div class="h-right">
+      <div id="h-avatar" class="avatar">🔥</div>
+      <div class="str-badge" id="str-badge">🔥 0</div>
+    </div>
+  </div>
+  <div id="main"></div>
+</div>
+
+<script>
+const CFG={XP_BASE:15,XP_STREAK:5,XP_LEVEL:150,BOSS_LIVES:3};
+const LEVEL_TITLES=[
+  [0,"Completely Cooked 💀"],[4,"Very Cooked 🔥"],[7,"Kinda Cooked 😰"],
+  [10,"Medium Done 🌡️"],[14,"Getting There 📈"],[18,"Almost Uncooked 💪"],
+  [22,"Not That Cooked 😎"],[28,"Grammar God 🏆"]
+];
+const TOPICS=[
+  {id:'pt', name:'Pretérito vs Imperfecto', emoji:'⚔️', desc:'Past tense showdown', color:'#ff5500'},
+  {id:'perf',name:'Presente Perfecto vs Pluscuam.', emoji:'⏰', desc:'he comido vs había comido', color:'#6366f1'},
+  {id:'ac',  name:'Acentos', emoji:'🗣️',desc:'Written accent rules', color:'#06b6d4'},
+  {id:'fi',  name:'Frases Impersonales', emoji:'📜', desc:'Es importante que...', color:'#8b5cf6'},
+  {id:'pp',  name:'Por vs Para', emoji:'🔀', desc:'Purpose, exchange, destination', color:'#10b981'},
+  {id:'se',  name:'Usos de Se', emoji:'🪞', desc:'Reflexive, passive & more', color:'#f59e0b'},
+  {id:'sub', name:'Subjuntivo', emoji:'🌀', desc:'WEIRDO triggers & forms', color:'#ec4899'},
+  {id:'pps', name:'Pret. Perfecto de Subjuntivo', emoji:'🔮', desc:'haya + participle', color:'#a855f7'}
+];
+const QDB={
+pt:[
+  {q:"Ayer yo _____ una pizza entera.",opts:["comía","comí","he comido","había comido"],ans:1,exp:"✅ Preterite (comí)! 'Ayer' = specific past time → completed action.",diff:1},
+  {q:"Cuando era niño, yo _____ al fútbol todos los días.",opts:["jugué","jugaré","jugaba","he jugado"],ans:2,exp:"✅ Imperfect (jugaba)! 'Todos los días' + childhood = repeated/habitual past action.",diff:1},
+  {q:"De repente, el teléfono _____.",opts:["sonaba","sonó","ha sonado","sonaría"],ans:1,exp:"✅ Preterite (sonó)! 'De repente' signals a sudden, completed event.",diff:1},
+  {q:"Ella _____ veinte años cuando conoció a su esposo.",opts:["tuvo","tiene","tenía","había tenido"],ans:2,exp:"✅ Imperfect (tenía)! Age is a description/state in the past.",diff:1},
+  {q:"Mientras yo _____, mi hermano llamó.",opts:["estudiaba","estudié","he estudiado","estudiaré"],ans:0,exp:"✅ Imperfect (estudiaba)! Ongoing action interrupted by another.",diff:2}
+],
+perf:[
+  {q:"Esta semana yo _____ mucha pizza.",opts:["comí","comía","he comido","había comido"],ans:2,exp:"✅ Presente Perfecto! 'Esta semana' is still current.",diff:1},
+  {q:"Cuando llegué, ella ya _____ del trabajo.",opts:["salió","salía","había salido","ha salido"],ans:2,exp:"✅ Pluscuamperfecto! She left before I arrived.",diff:1},
+  {q:"What is the past participle of 'hacer'?",opts:["hacido","hachado","hecho","hazado"],ans:2,exp:"✅ hecho! Irregular.",diff:1},
+  {q:"Ya _____ mis deberes. ¡Puedo salir!",opts:["Terminé","Terminaba","He terminado","Había terminado"],ans:2,exp:"✅ Presente Perfecto! Result matters now.",diff:1}
+],
+ac:[
+  {q:"'café' is what type of word?",opts:["Llana","Esdrújula","Aguda","Sobresdrújula"],ans:2,exp:"✅ Aguda! Stress on last syllable.",diff:1},
+  {q:"When does an AGUDA word need a written accent?",opts:["Always","Never","When it ends in n, s, or vowel","When it ends in consonant"],ans:2,exp:"✅ Agudas need accents when ending in n, s, or vowel.",diff:1},
+  {q:"Fill in: '¿_____ hora es?'",opts:["Que","Qué","Como","Cómo"],ans:1,exp:"✅ Qué! Interrogative words take accents.",diff:1},
+  {q:"'tú/tu' — '_____ libro es muy interesante.'",opts:["Tú","Tu","Both","Neither"],ans:1,exp:"✅ Tu without accent = your.",diff:2}
+],
+fi:[
+  {q:"'Es importante que tú _____ (estudiar).'",opts:["estudias","estudiabas","estudies","estudiarás"],ans:2,exp:"✅ Subjunctive! 'Es importante que' triggers it.",diff:1},
+  {q:"'Es importante _____ mucho.' (general)",opts:["que estudies","estudiar","que estudias","estudiando"],ans:1,exp:"✅ Infinitive for a general statement.",diff:1},
+  {q:"'Es verdad que Juan _____ mucho.'",opts:["trabaje","trabajara","trabajaría","trabaja"],ans:3,exp:"✅ Indicative! 'Es verdad que' is factual.",diff:2},
+  {q:"Which expression does NOT trigger subjunctive?",opts:["Es importante que","Es necesario que","Es verdad que","Es posible que"],ans:2,exp:"✅ 'Es verdad que' = fact.",diff:2}
+],
+pp:[
+  {q:"'Compré este regalo _____ ti.'",opts:["por","para","de","en"],ans:1,exp:"✅ Para! Recipient of the gift.",diff:1},
+  {q:"'Gracias _____ tu ayuda.'",opts:["para","en","por","de"],ans:2,exp:"✅ Por! Gratitude/cause.",diff:1},
+  {q:"'Necesito el informe _____ el lunes.'",opts:["por","de","en","para"],ans:3,exp:"✅ Para! Deadline.",diff:1},
+  {q:"'Lo compré _____ veinte dólares.'",opts:["para","de","en","por"],ans:3,exp:"✅ Por! Exchange/price.",diff:1}
+],
+se:[
+  {q:"'María se peina el cabello.' — What type of 'se'?",opts:["Impersonal","Reflexive","Reciprocal","Passive"],ans:1,exp:"✅ Reflexive! María combs her own hair.",diff:1},
+  {q:"'Se habla español aquí.' — What type of 'se'?",opts:["Reflexive","Reciprocal","Impersonal","Passive"],ans:2,exp:"✅ Impersonal! No specific subject.",diff:1},
+  {q:"Replace 'le': '¿Le diste el libro a Juan?' →",opts:["¿Le lo diste?","¿Lo se diste?","¿Se lo diste?","¿Lo diste se?"],ans:2,exp:"✅ Le/les before lo/la/los/las becomes se.",diff:2},
+  {q:"Impersonal se always uses what verb form?",opts:["1st person singular","3rd person singular","3rd person plural","Infinitive"],ans:1,exp:"✅ 3rd person singular.",diff:2}
+],
+sub:[
+  {q:"WEIRDO: 'W' stands for?",opts:["Wishing","Wanting","Wondering","Waiting"],ans:0,exp:"✅ Wishing!",diff:1},
+  {q:"'Quiero que tú _____ (venir).'",opts:["vienes","vendrás","viniste","vengas"],ans:3,exp:"✅ Subjunctive (vengas)! Want + different subject.",diff:1},
+  {q:"'No creo que él _____ razón.'",opts:["tiene","tendrá","tuviera","tenga"],ans:3,exp:"✅ Subjunctive! Doubt/denial.",diff:1},
+  {q:"Irregular subjunctive: 'ir' — 'tú' form:",opts:["vayas","vas","vays","iras"],ans:0,exp:"✅ vayas!",diff:2}
+],
+pps:[
+  {q:"The present perfect subjunctive is formed with:",opts:["haber imperfect subj. + participle","haber present subj. + participle","haber present + participle","ser present subj. + participle"],ans:1,exp:"✅ haya/hayas/haya... + participle.",diff:1},
+  {q:"'Me alegra que _____ (tú/ganar) el premio.'",opts:["ganes","ganaras","hayas ganado","hubieras ganado"],ans:2,exp:"✅ Present perfect subjunctive for something already done.",diff:1},
+  {q:"'haber' in present perfect subjunctive — 'nosotros' form:",opts:["habemos","hayamos","hubiéramos","habremos"],ans:1,exp:"✅ hayamos.",diff:1},
+  {q:"Past participle of 'hacer' in this tense:",opts:["hacido","hachado","hecho","hazado"],ans:2,exp:"✅ hecho.",diff:1}
+]
+};
+const BADGE_DEFS=[
+  {id:'first_blood', name:'First Blood', emoji:'🩸', desc:'Answer your first question'},
+  {id:'fire_starter',name:'Fire Starter', emoji:'🔥', desc:'Get a 5-question streak'},
+  {id:'unstoppable', name:'Unstoppable', emoji:'⚡', desc:'Get a 10-question streak'},
+  {id:'scholar', name:'Scholar', emoji:'📚', desc:'Complete any topic 100%'},
+  {id:'boss_slayer', name:'Boss Slayer', emoji:'🐉', desc:'Beat the Final Boss'},
+  {id:'lvl5', name:'Level 5', emoji:'⭐', desc:'Reach level 5'},
+  {id:'speedster', name:'Speedster', emoji:'💨', desc:'Answer in under 3 seconds'},
+  {id:'perfectionist',name:'Perfectionist', emoji:'💎', desc:'Get 100% on any quiz'},
+  {id:'grinder', name:'Grinder', emoji:'⚙️', desc:'Answer 100 questions total'}
+];
+const CLASSES=[
+  {id:'swordsman',name:'Swordsman',title:'Blade Scholar',bonus:'Correct streaks charge a heavy slash.',special:'Blade Storm',desc:'Deals big bonus damage after 3 correct answers.',color:'#ff5500',icon:[9,67],attack:'soldier-attack-sword.png'},
+  {id:'archer',name:'Archer',title:'Focus Ranger',bonus:'Fast answers pierce enemy defense.',special:'Perfect Shot',desc:'Fast correct answers fire a piercing arrow.',color:'#22c55e',icon:[0,57],attack:'soldier-attack-archer.png'},
+  {id:'mage',name:'Mage',title:'Grammar Mage',bonus:'Special attacks splash into healing.',special:'Syntax Nova',desc:'Every 4th correct answer heals you and blasts the enemy.',color:'#6366f1',icon:[5,40],attack:'soldier-attack-mage.png'}
+];
+const ENEMIES={
+  pt:{name:'Pretérito Orc',emoji:'⚔️',taunt:'Past tense shadows swirl around you.',hp:95,reward:25},
+  perf:{name:'Clockwork Orc',emoji:'⏰',taunt:'Time bends. Perfect tenses decide the battle.',hp:105,reward:28},
+  ac:{name:'Accent Orc',emoji:'🎵',taunt:'Every missing accent powers the next strike.',hp:85,reward:22},
+  fi:{name:'Oracle Orc',emoji:'🔮',taunt:'The oracle judges every expression.',hp:100,reward:26},
+  pp:{name:'Path Orc',emoji:'🛤️',taunt:'Por or para? Choose the road carefully.',hp:95,reward:25},
+  se:{name:'Mirror Orc',emoji:'🪞',taunt:'Reflexive, passive, impersonal: the mirror keeps changing.',hp:110,reward:30},
+  sub:{name:'Subjunctive Orc Lord',emoji:'🌀',taunt:'No creo que sobrevivas esta ronda.',hp:125,reward:35},
+  pps:{name:'Storm Orc Mage',emoji:'🌩️',taunt:'Haya, hayas, hayamos: the storm is forming.',hp:120,reward:34},
+  boss:{name:'Final Exam Warlord',emoji:'💀',taunt:'All topics converge. Prove you are not that cooked.',hp:180,reward:75}
+};
+const GAME={tileSize:48,mobileTileSize:48,worldW:36,worldH:26,viewW:13,viewH:9,battleSpriteScale:4.4,mapSpriteScale:2.2,selectSpriteScale:2.75};
+const WORLD_W=GAME.worldW,WORLD_H=GAME.worldH,WORLD_VIEW_W=GAME.viewW,WORLD_VIEW_H=GAME.viewH;
+const WORLD_NPCS=[
+  {id:'pt',x:4,y:4,label:'Past Hall',emoji:'⚔️',color:'#ff5500'},
+  {id:'perf',x:15,y:3,label:'Clock Tower',emoji:'⏰',color:'#6366f1'},
+  {id:'ac',x:25,y:5,label:'Accent Grove',emoji:'🎵',color:'#06b6d4'},
+  {id:'fi',x:6,y:13,label:'Oracle Cabin',emoji:'🔮',color:'#8b5cf6'},
+  {id:'pp',x:15,y:12,label:'Crossroads',emoji:'🛤️',color:'#10b981'},
+  {id:'se',x:24,y:13,label:'Mirror Lake',emoji:'🪞',color:'#f59e0b'},
+  {id:'sub',x:8,y:18,label:'Subj Tower',emoji:'🌀',color:'#ec4899'},
+  {id:'pps',x:21,y:18,label:'Storm Gate',emoji:'🌩️',color:'#a855f7'},
+  {id:'boss',x:27,y:19,label:'Final Gym',emoji:'💀',color:'#ef4444'}
+];
+const WORLD_ITEMS=[
+  {x:5,y:5,icon:[0,0],label:'Potion'},
+  {x:18,y:6,icon:[12,0],label:'Star'},
+  {x:12,y:16,icon:[0,5],label:'Key'},
+  {x:26,y:17,icon:[2,10],label:'Gem'}
+];
+const WORLD_DECOS=[
+  {x:2,y:3,type:'wood-tree'},{x:2,y:4,type:'wood-big'},{x:3,y:3,type:'wood-tree'},
+  {x:10,y:2,type:'wood-tree'},{x:20,y:3,type:'wood-big'},{x:21,y:4,type:'wood-tree'},
+  {x:27,y:7,type:'wood-tree'},{x:26,y:8,type:'wood-big'},{x:3,y:15,type:'wood-big'},
+  {x:4,y:16,type:'wood-tree'},{x:18,y:15,type:'wood-tree'},{x:19,y:16,type:'wood-big'},
+  {x:11,y:9,type:'wood-rock'},{x:20,y:12,type:'wood-rock'},{x:5,y:18,type:'wood-rock'}
+];
+let worldPlayer={x:17.5,y:20.5},worldMsg='Use WASD or arrow keys to move freely. Press E near a trainer to battle.';
+const FREE_MOVE={keys:{},speed:4.5,radius:.28,last:0,raf:null,walking:false};
+const WEAPONS=[
+  {id:'rusty',name:'Rusty Sword',icon:[9,67],damage:0,crit:.03,level:1,desc:'+0 damage, tiny crit chance'},
+  {id:'steel',name:'Steel Sword',icon:[10,67],damage:5,crit:.05,level:2,wins:1,desc:'+5 damage, steady starter upgrade'},
+  {id:'grammar',name:'Grammar Blade',icon:[11,67],damage:9,crit:.07,level:4,wins:3,desc:'+9 damage, stronger streak pressure'},
+  {id:'accent',name:'Accent Saber',icon:[12,67],damage:12,crit:.10,topic:'ac',desc:'+12 damage, unlock by mastering Acentos'},
+  {id:'subjunctive',name:'Subjunctive Katana',icon:[13,67],damage:16,crit:.12,topic:'sub',desc:'+16 damage, unlock through Subjuntivo'},
+  {id:'pluscuam',name:'Pluscuamperfecto Greatsword',icon:[14,67],damage:22,crit:.08,level:8,wins:8,desc:'+22 damage, late-game heavy blade'}
+];
+Object.assign(ENEMIES,{
+  pt:{name:'Preterite Wolf',kind:'skeleton',taunt:'Past tense shadows stalk the trail.',hp:96,reward:25,difficulty:1},
+  perf:{name:'Clockwork Orc',kind:'orc',taunt:'Time bends. Perfect tenses decide the battle.',hp:110,reward:28,difficulty:2},
+  ac:{name:'Accent Goblin',kind:'skeleton',taunt:'Every missing accent powers the next strike.',hp:88,reward:24,difficulty:1},
+  fi:{name:'Impersonal Slime',kind:'slime',taunt:'The oracle judges every expression.',hp:100,reward:26,difficulty:2},
+  pp:{name:'Por/Para Bandit',kind:'skeleton',taunt:'Por or para? Choose the road carefully.',hp:100,reward:26,difficulty:2},
+  se:{name:'Se Phantom',kind:'skeleton',taunt:'Reflexive, passive, impersonal: the mirror keeps changing.',hp:112,reward:30,difficulty:2},
+  sub:{name:'Subjunctive Orc',kind:'orc',taunt:'No creo que sobrevivas esta ronda.',hp:128,reward:35,difficulty:3},
+  pps:{name:'Pluscuamperfecto Knight',kind:'skeleton',taunt:'Haya, hayas, hayamos: the storm is forming.',hp:124,reward:34,difficulty:3},
+  boss:{name:'Final Exam Warlord',kind:'orc',taunt:'All topics converge. Prove you are not that cooked.',hp:185,reward:75,difficulty:4}
+});
+WORLD_NPCS.splice(0,WORLD_NPCS.length,
+  {id:'pt',x:6.5,y:7.5,label:'Past Woods',color:'#ff5500'},
+  {id:'perf',x:18.5,y:5.5,label:'Clock Tower',color:'#6366f1'},
+  {id:'ac',x:29.5,y:7.5,label:'Accent Grove',color:'#06b6d4'},
+  {id:'fi',x:8.5,y:17.5,label:'Oracle Farm',color:'#8b5cf6'},
+  {id:'pp',x:18.5,y:13.5,label:'Crossroads',color:'#10b981'},
+  {id:'se',x:29.5,y:15.5,label:'Mirror Coast',color:'#f59e0b'},
+  {id:'sub',x:10.5,y:22.5,label:'Subj Tower',color:'#ec4899'},
+  {id:'pps',x:24.5,y:22.5,label:'Storm Gate',color:'#a855f7'},
+  {id:'boss',x:32.5,y:21.5,label:'Final Gym',color:'#ef4444'}
+);
+WORLD_ITEMS.splice(0,WORLD_ITEMS.length,
+  {x:13.5,y:8.5,icon:[0,0],label:'Village Potion'},
+  {x:20.5,y:18.5,icon:[12,0],label:'Path Star'},
+  {x:31.5,y:18.5,icon:[2,10],label:'Coast Gem'}
+);
+WORLD_DECOS.splice(0,WORLD_DECOS.length,
+  {x:3,y:4,type:'tree'},{x:5,y:4,type:'tree'},{x:7,y:4,type:'small-tree'},{x:3,y:7,type:'tree'},{x:4,y:9,type:'small-tree'},
+  {x:14,y:6,type:'house'},{x:21,y:6,type:'house'},{x:13,y:10,type:'fence'},{x:22,y:10,type:'fence'},
+  {x:6,y:16,type:'crops'},{x:7,y:16,type:'crops'},{x:10,y:16,type:'small-tree'},
+  {x:27,y:12,type:'tree'},{x:31,y:12,type:'small-tree'},{x:27,y:19,type:'tree'},{x:33,y:19,type:'small-tree'},
+  {x:11,y:21,type:'tower'},{x:24,y:21,type:'tower'},{x:32,y:20,type:'tower'}
+);
+const STORE='ntc_players_v1';
+const SUPABASE_URL='https://brrrrazejiqjpjmldbux.supabase.co';
+const SUPABASE_KEY='sb_publishable_VyOglCIoOZzfORXN6wAxnQ_3siNN9Is';
+const DB=window.supabase?window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY):null;
+let PLAYERS=[],activePlayerId=null,S=null,QS={},BS={},timerInterval=null,isOnline=false;
+
+function defaultState(){
+  return {xp:0,totalXP:0,level:1,streak:0,maxStreak:0,totalQ:0,totalCorrect:0,badges:[],topicStats:{},boss:{beaten:false},coins:0,classId:null,creatureId:null,battleWins:0,inventory:[],weaponId:'rusty',unlockedWeapons:['rusty'],worldPos:{x:17.5,y:20.5}};
+}
+function newId(){return crypto.randomUUID?crypto.randomUUID():String(Date.now()+Math.random());}
+function normalizeState(){
+  if(!S)S=defaultState();
+  if(S.totalXP===undefined)S.totalXP=0;
+  if(!S.badges)S.badges=[];
+  if(!S.boss)S.boss={beaten:false};
+  if(S.coins===undefined)S.coins=0;
+  if(S.battleWins===undefined)S.battleWins=0;
+  if(!S.inventory)S.inventory=[];
+  if(!S.weaponId)S.weaponId='rusty';
+  if(!S.unlockedWeapons)S.unlockedWeapons=['rusty'];
+  if(!S.unlockedWeapons.includes('rusty'))S.unlockedWeapons.unshift('rusty');
+  if(!S.worldPos)S.worldPos={x:17.5,y:20.5};
+  worldPlayer={x:Number(S.worldPos.x)||17.5,y:Number(S.worldPos.y)||20.5};
+  if(!S.classId&&S.creatureId)S.classId=S.creatureId;
+  if(S.classId&&!CLASSES.some(c=>c.id===S.classId))S.classId=null;
+  if(!S.topicStats)S.topicStats={};
+  TOPICS.forEach(t=>{if(!S.topicStats[t.id])S.topicStats[t.id]={total:QDB[t.id].length,correct:0,attempted:0};});
+}
+function dbToPlayer(row){
+  return {id:row.id,name:row.name,photo:row.photo||'',state:row.state||defaultState()};
+}
+function playerToRow(player){
+  return {
+    id:player.id,
+    name:player.name,
+    photo:player.photo||'',
+    state:player.state||defaultState(),
+    total_xp:(player.state&&player.state.totalXP)||0,
+    updated_at:new Date().toISOString()
+  };
+}
+async function loadPlayers(){
+  activePlayerId=localStorage.getItem('ntc_active_player');
+  if(DB){
+    try{
+      const {data,error}=await DB.from('players').select('*').order('total_xp',{ascending:false});
+      if(error)throw error;
+      PLAYERS=(data||[]).map(dbToPlayer);
+      isOnline=true;
+    }catch(e){
+      isOnline=false;
+      console.warn('Supabase load failed, using local data:',e.message);
+    }
+  }
+  if(!isOnline){
+    try{PLAYERS=JSON.parse(localStorage.getItem(STORE))||[];}catch(e){PLAYERS=[];}
+  }
+  if(!PLAYERS.length){
+    const id=newId();
+    PLAYERS=[{id,name:'Player 1',photo:'',state:defaultState()}];
+    activePlayerId=id;
+    await savePlayers();
+  }
+  if(!PLAYERS.some(p=>p.id===activePlayerId))activePlayerId=PLAYERS[0].id;
+  S=PLAYERS.find(p=>p.id===activePlayerId).state;
+  normalizeState();
+  await savePlayers();
+}
+async function savePlayers(){
+  const p=PLAYERS.find(x=>x.id===activePlayerId);
+  if(p)p.state=S;
+  localStorage.setItem(STORE,JSON.stringify(PLAYERS));
+  localStorage.setItem('ntc_active_player',activePlayerId);
+  if(DB&&p){
+    try{
+      const {error}=await DB.from('players').upsert(playerToRow(p));
+      if(error)throw error;
+      isOnline=true;
+    }catch(e){
+      isOnline=false;
+      console.warn('Supabase save failed:',e.message);
+      showToast('Saved locally only. Check Supabase table/policies.','⚠️');
+    }
+  }
+}
+function activePlayer(){return PLAYERS.find(p=>p.id===activePlayerId)||PLAYERS[0];}
+function saveState(){return savePlayers();}
+
+function getLevelTitle(lvl){let t=LEVEL_TITLES[0][1];for(const[l,n]of LEVEL_TITLES){if(lvl>=l)t=n;}return t;}
+function getXpNeeded(lvl){return CFG.XP_LEVEL*lvl;}
+function addXP(pts,x,y){
+  const prev=S.level;
+  S.xp+=pts;
+  S.totalXP=(S.totalXP||0)+pts;
+  floatXP(`+${pts} XP`,x,y);
+  while(S.xp>=getXpNeeded(S.level)){S.xp-=getXpNeeded(S.level);S.level++;setTimeout(()=>showLevelUp(prev+1),400);}
+  updateHeader();saveState();
+}
+function updateHeader(){
+  const need=getXpNeeded(S.level),pct=Math.min(100,(S.xp/need)*100),p=activePlayer();
+  byId('h-lvl').textContent=`Lvl ${S.level}`;
+  byId('h-xplbl').textContent=`${S.xp} / ${need} XP`;
+  byId('xp-in').style.width=pct+'%';
+  byId('str-badge').textContent=`🔥 ${S.streak}`;
+  byId('h-avatar').innerHTML=p.photo?`<img src="${p.photo}" alt="${escapeHtml(p.name)}" style="width:100%;height:100%;border-radius:50%;object-fit:cover">`:'🔥';
+}
+function calcCookPercent(){
+  const vals=Object.values(S.topicStats);
+  const total=vals.reduce((a,t)=>a+t.total,0),correct=vals.reduce((a,t)=>a+t.correct,0);
+  return total?Math.round((correct/total)*100):0;
+}
+function getCookStatus(pct){
+  if(pct<20)return{color:'#ef4444',label:'Completely Cooked 💀'};
+  if(pct<40)return{color:'#ff5500',label:'Very Cooked 🔥'};
+  if(pct<55)return{color:'#f59e0b',label:'Kinda Cooked 😰'};
+  if(pct<70)return{color:'#eab308',label:'Medium Done 🌡️'};
+  if(pct<80)return{color:'#84cc16',label:'Getting There 📈'};
+  if(pct<90)return{color:'#22c55e',label:'Almost Uncooked 💪'};
+  if(pct<97)return{color:'#10b981',label:'Not That Cooked 😎'};
+  return{color:'#6366f1',label:'Grammar God 🏆'};
+}
+function checkBadge(id){
+  if(S.badges.includes(id))return;
+  S.badges.push(id);saveState();
+  const b=BADGE_DEFS.find(x=>x.id===id);
+  if(b)showToast(`Badge unlocked: ${b.name}`,b.emoji);
+}
+function checkBadges(opts={}){
+  if(S.totalQ>=1)checkBadge('first_blood');
+  if(S.streak>=5)checkBadge('fire_starter');
+  if(S.streak>=10)checkBadge('unstoppable');
+  if(S.level>=5)checkBadge('lvl5');
+  if(S.totalQ>=100)checkBadge('grinder');
+  if(opts.speedster)checkBadge('speedster');
+  if(opts.perfect)checkBadge('perfectionist');
+  if(opts.topicComplete)checkBadge('scholar');
+  if(opts.boss)checkBadge('boss_slayer');
+}
+function setMain(html){byId('main').innerHTML=`<div class="screen">${html}</div>`;}
+function showHome(){
+  updateHeader();
+  const p=activePlayer(),cookPct=calcCookPercent(),{color,label}=getCookStatus(cookPct),acc=S.totalQ?Math.round((S.totalCorrect/S.totalQ)*100):0;
+  setMain(`
+    <div class="home">
+      <div class="h-fire">🔥</div>
+      <div class="h-title">NOTTHAT<br>COOKED</div>
+      <div class="h-sub">Playing as ${escapeHtml(p.name)}</div>
+      <div class="h-stats">
+        <div class="h-stat"><div class="h-sn" style="color:var(--fire)">${S.level}</div><div class="h-sl">Level</div></div>
+        <div class="h-stat"><div class="h-sn" style="color:var(--str)">${S.totalXP||0}</div><div class="h-sl">Total XP</div></div>
+        <div class="h-stat"><div class="h-sn" style="color:var(--xp)">${acc}%</div><div class="h-sl">Accuracy</div></div>
+        <div class="h-stat"><div class="h-sn" style="color:var(--ok)">${S.coins||0}</div><div class="h-sl">Coins</div></div>
+      </div>
+      <div class="cook-meter">
+        <div class="cm-row"><span>You are: <strong style="color:${color}">${label}</strong></span><span style="color:${color};font-weight:700">${cookPct}%</span></div>
+        <div class="cm-out"><div class="cm-in" style="width:${cookPct}%;background:linear-gradient(90deg,${color},${color}bb)"></div></div>
+      </div>
+      <div class="h-acts">
+        <button class="btn btn-fire btn-lg btn-full" onclick="showWorld()">🗺️ Adventure Mode</button>
+        <button class="btn btn-ghost btn-full" onclick="showTopics()">📚 Classic Quiz</button>
+        <button class="btn btn-ghost btn-full" onclick="showLeaderboard()">🏅 Leaderboard</button>
+        <div class="h-row">
+          <button class="btn btn-ghost btn-full" onclick="showStats()">📊 Stats</button>
+          <button class="btn btn-ghost btn-full" onclick="showBadges()">🏆 Badges</button>
+        </div>
+        <button class="btn btn-ghost btn-full" onclick="resetActivePlayer()">🗑️ Reset Player</button>
+      </div>
+    </div>`);
+}
+
+function getClass(){
+  return CLASSES.find(c=>c.id===S.classId)||CLASSES[0];
+}
+function weaponUnlocked(w){
+  if(!w)return false;
+  const topicOk=w.topic&&S.topicStats[w.topic]&&S.topicStats[w.topic].correct>=Math.min(3,S.topicStats[w.topic].total);
+  return (S.level>=(w.level||1))&&((S.battleWins||0)>=(w.wins||0))&&(!w.topic||topicOk);
+}
+function refreshWeaponUnlocks(show=false){
+  if(!S.unlockedWeapons)S.unlockedWeapons=['rusty'];
+  let gained=[];
+  WEAPONS.forEach(w=>{
+    if(weaponUnlocked(w)&&!S.unlockedWeapons.includes(w.id)){
+      S.unlockedWeapons.push(w.id);
+      gained.push(w.name);
+    }
+  });
+  if(!S.unlockedWeapons.includes(S.weaponId))S.weaponId='rusty';
+  if(show&&gained.length)showToast(`Weapon unlocked: ${gained.join(', ')}`,'*');
+  return gained;
+}
+function getWeapon(){
+  refreshWeaponUnlocks(false);
+  return WEAPONS.find(w=>w.id===S.weaponId)||WEAPONS[0];
+}
+async function equipWeapon(id){
+  refreshWeaponUnlocks(false);
+  if(!S.unlockedWeapons.includes(id)){showToast('That weapon is still locked','!');return;}
+  S.weaponId=id;
+  await saveState();
+  showWeapons();
+}
+function showWeapons(){
+  refreshWeaponUnlocks(false);
+  const current=getWeapon();
+  const cards=WEAPONS.map(w=>{
+    const unlocked=S.unlockedWeapons.includes(w.id),equipped=current.id===w.id;
+    return `<div class="weapon-card ${equipped?'equipped':''} ${unlocked?'':'locked'}">
+      ${ravenIcon(w.icon[0],w.icon[1])}
+      <div class="hero-name">${w.name}</div>
+      <div class="hero-meta">${w.desc}<br>Damage +${w.damage} | Crit ${Math.round(w.crit*100)}%</div>
+      <button class="btn ${equipped?'btn-ghost':'btn-fire'} btn-sm btn-full" onclick="equipWeapon('${w.id}')" ${unlocked?'':'disabled'}>${equipped?'Equipped':unlocked?'Equip':'Locked'}</button>
+    </div>`;
+  }).join('');
+  setMain(`<div class="page"><button class="back-btn" onclick="showWorld()">Back</button><div class="pg-title">Weapons</div><div class="pg-sub">Win battles, level up, and master topics to unlock stronger blades.</div><div class="weapon-grid">${cards}</div></div>`);
+}
+function showStarterSelect(){
+  const cards=CLASSES.map(c=>`
+    <div class="starter" onclick="chooseStarter('${c.id}')">
+      <div class="big-sprite class-preview" style="color:${c.color}">
+        <div class="class-weapon">${ravenIcon(c.icon[0],c.icon[1])}</div>
+        ${characterSprite('cute-player idle','select-char')}
+      </div>
+      <div class="hero-name">${c.name}</div>
+      <div class="hero-meta">${c.title}<br>${c.bonus}<br><strong style="color:${c.color}">${c.special}</strong>: ${c.desc}</div>
+    </div>
+  `).join('');
+  setMain(`
+    <div class="page">
+      <button class="back-btn" onclick="showHome()">← Back</button>
+      <div class="pg-title">Choose Your Class</div>
+      <div class="pg-sub">Pick your Spanish RPG class. Each one has a different special attack.</div>
+      <div class="starter-grid">${cards}</div>
+    </div>`);
+}
+async function chooseStarter(id){
+  S.classId=id;
+  S.creatureId=id;
+  worldPlayer={x:17.5,y:20.5};
+  S.worldPos={...worldPlayer};
+  refreshWeaponUnlocks(false);
+  await saveState();
+  showWorld();
+}
+function showWorld(){
+  if(!S.classId){showStarterSelect();return;}
+  updateHeader();
+  const c=getClass();
+  const cam=getCamera();
+  const tiles=[];
+  for(let y=0;y<WORLD_H;y++){
+    for(let x=0;x<WORLD_W;x++){
+      tiles.push(`<div class="tile ${worldTile(x,y)}"></div>`);
+    }
+  }
+  const npcs=WORLD_NPCS.map(n=>{
+    const topic=TOPICS.find(t=>t.id===n.id),st=topic?S.topicStats[n.id]:null,pct=st?Math.round((st.correct/st.total)*100):(S.boss.beaten?100:0);
+    return `<div class="map-thing map-npc" style="left:${n.x*100/WORLD_W}%;top:${n.y*100/WORLD_H}%;width:${100/WORLD_W}%;height:${100/WORLD_H}%;--npc:${n.color}" onclick="talkToNpc('${n.id}')">
+      <div class="map-label">${n.label} ${pct}%</div>
+      <div class="map-sprite">${characterSprite('orc-idle','map-char')}</div>
+    </div>`;
+  }).join('');
+  const decos=WORLD_DECOS.map(d=>`<div class="map-thing" style="left:${d.x*100/WORLD_W}%;top:${d.y*100/WORLD_H}%;width:${100/WORLD_W}%;height:${100/WORLD_H}%"><div class="wood-prop ${d.type}"></div></div>`).join('');
+  const items=WORLD_ITEMS.map(item=>`
+    <div class="map-thing map-item" style="left:${item.x*100/WORLD_W}%;top:${item.y*100/WORLD_H}%;width:${100/WORLD_W}%;height:${100/WORLD_H}%">
+      <div title="${item.label}" style="transform:scale(.72)">${ravenIcon(item.icon[0],item.icon[1])}</div>
+    </div>`).join('');
+  const player=`<div class="map-thing map-player" id="map-player" style="left:${worldPlayer.x*100/WORLD_W}%;top:${worldPlayer.y*100/WORLD_H}%;width:${100/WORLD_W}%;height:${100/WORLD_H}%"><div class="map-sprite">${characterSprite('soldier-walk','map-char')}</div></div>`;
+  setMain(`
+    <div class="world-shell">
+      <div class="world-hud">
+        <button class="back-btn" onclick="showHome()">← Home</button>
+        <div class="coin-pill">${c.name} · ${c.title} · Level ${S.level}</div>
+        <div class="battle-actions" style="margin-top:0">
+          <button class="btn btn-ghost btn-sm" onclick="showAdventure()">Zone List</button>
+          <button class="btn btn-ghost btn-sm" onclick="showShop()">Shop</button>
+          <button class="btn btn-ghost btn-sm" onclick="showLeaderboard()">Leaderboard</button>
+        </div>
+      </div>
+      <div class="world-wrap">
+        <div class="world-camera">
+          <div class="tile-map" id="tile-map" style="--camx:${cam.x};--camy:${cam.y}">${tiles.join('')}${decos}${items}${npcs}${player}</div>
+        </div>
+      </div>
+      <div class="world-dialogue" id="world-dialogue">${worldMsg}</div>
+      <div class="dpad">
+        <button class="up" onclick="moveWorld(0,-1)">↑</button>
+        <button class="left" onclick="moveWorld(-1,0)">←</button>
+        <button class="act" onclick="interactWorld()">E</button>
+        <button class="right" onclick="moveWorld(1,0)">→</button>
+        <button class="down" onclick="moveWorld(0,1)">↓</button>
+      </div>
+    </div>`);
+}
+function worldTile(x,y){
+  if(y===0||x===0||x===WORLD_W-1||y===WORLD_H-1)return 'wall';
+  const water=(x>=22&&x<=28&&y>=14&&y<=16)||(x>=1&&x<=3&&y>=9&&y<=12);
+  const nearWater=(x>=21&&x<=29&&y>=12&&y<=17)||(x>=1&&x<=5&&y>=8&&y<=13);
+  const path=(x>=13&&x<=17)||(y>=10&&y<=12)||(x>=3&&x<=6&&y>=3&&y<=5)||(x===5&&y>=3&&y<=12)||(x>=24&&x<=27&&y>=17&&y<=20)||(x===24&&y>=12&&y<=16)||(x===25&&y>=5&&y<=12)||(y===18&&x>=8&&x<=17);
+  const floor=(x>=3&&x<=5&&y>=2&&y<=4)||(x>=14&&x<=16&&y>=2&&y<=4)||(x>=7&&x<=9&&y>=17&&y<=19)||(x>=26&&x<=28&&y>=18&&y<=20);
+  if(water)return 'water';
+  if(nearWater&&!path&&!floor)return hashTile(x,y)%3===0?'shore':'sand';
+  if(path)return hashTile(x,y)%4===0?'path path2':'path';
+  if(floor)return 'floor';
+  const h=hashTile(x,y);
+  if(h%11===0)return 'flowers';
+  if(h%5===0)return 'grass grass2';
+  return 'grass';
+}
+function hashTile(x,y){return Math.abs((x*73856093)^(y*19349663))%97;}
+function getCamera(){
+  return {
+    x:Math.max(0,Math.min(WORLD_W-WORLD_VIEW_W,worldPlayer.x-Math.floor(WORLD_VIEW_W/2))),
+    y:Math.max(0,Math.min(WORLD_H-WORLD_VIEW_H,worldPlayer.y-Math.floor(WORLD_VIEW_H/2)))
+  };
+}
+function isBlocked(x,y){
+  if(x<0||y<0||x>=WORLD_W||y>=WORLD_H)return true;
+  if(worldTile(x,y)==='wall'||worldTile(x,y)==='water')return true;
+  return WORLD_NPCS.some(n=>n.x===x&&n.y===y)||WORLD_DECOS.some(d=>d.x===x&&d.y===y);
+}
+function moveWorld(dx,dy){
+  const nx=worldPlayer.x+dx,ny=worldPlayer.y+dy;
+  if(isBlocked(nx,ny)){
+    const npc=WORLD_NPCS.find(n=>n.x===nx&&n.y===ny);
+    worldMsg=npc?`${npc.label}: Press E to challenge ${ENEMIES[npc.id].name}.`:'That way is blocked.';
+  }else{
+    worldPlayer={x:nx,y:ny};
+    const near=getNearbyNpc();
+    worldMsg=near?`${near.label}: Press E to battle ${ENEMIES[near.id].name}.`:'Explore the academy and find grammar trainers.';
+  }
+  updateWorldView();
+}
+function getNearbyNpc(){
+  return WORLD_NPCS.find(n=>Math.abs(n.x-worldPlayer.x)+Math.abs(n.y-worldPlayer.y)===1);
+}
+function interactWorld(){
+  const npc=getNearbyNpc();
+  if(!npc){worldMsg='No trainer nearby. Walk next to one and press E.';updateWorldView();return;}
+  talkToNpc(npc.id);
+}
+function updateWorldView(){
+  const cam=getCamera();
+  const map=byId('tile-map');
+  const player=byId('map-player');
+  const dialogue=byId('world-dialogue');
+  if(map){map.style.setProperty('--camx',cam.x);map.style.setProperty('--camy',cam.y);}
+  if(player){
+    player.style.left=`${worldPlayer.x*100/WORLD_W}%`;
+    player.style.top=`${worldPlayer.y*100/WORLD_H}%`;
+  }
+  if(dialogue)dialogue.textContent=worldMsg;
+}
+function decorSrc(type){
+  const base='assets/cute-fantasy';
+  if(type==='tree')return `${base}/decor/Oak_Tree.png`;
+  if(type==='small-tree')return `${base}/decor/Oak_Tree_Small.png`;
+  if(type==='house'||type==='tower')return `${base}/decor/House_1_Wood_Base_Blue.png`;
+  if(type==='fence')return `${base}/decor/Fences.png`;
+  if(type==='crops')return `${base}/decor/Outdoor_Decor_Free.png`;
+  return `${base}/decor/Chest.png`;
+}
+function showWorld(){
+  if(!S.classId){showStarterSelect();return;}
+  updateHeader();
+  refreshWeaponUnlocks(false);
+  const c=getClass(),weapon=getWeapon();
+  const tiles=[];
+  for(let y=0;y<WORLD_H;y++){
+    for(let x=0;x<WORLD_W;x++)tiles.push(`<div class="tile ${worldTile(x,y)}"></div>`);
+  }
+  const decos=WORLD_DECOS.map(d=>`<img class="map-decor ${d.type}" src="${decorSrc(d.type)}" alt="" style="left:calc(${d.x} * var(--tile));top:calc(${d.y} * var(--tile))">`).join('');
+  const items=WORLD_ITEMS.map(item=>`<div class="map-thing map-item" style="left:calc(${item.x} * var(--tile));top:calc(${item.y} * var(--tile))"><div title="${item.label}">${ravenIcon(item.icon[0],item.icon[1])}</div></div>`).join('');
+  const npcs=WORLD_NPCS.map(n=>{
+    const topic=TOPICS.find(t=>t.id===n.id),st=topic?S.topicStats[n.id]:null,pct=st?Math.round((st.correct/st.total)*100):(S.boss.beaten?100:0);
+    return `<div class="map-thing free-entity map-npc" style="left:calc(${n.x} * var(--tile));top:calc(${n.y} * var(--tile));--npc:${n.color}" onclick="talkToNpc('${n.id}')">
+      <div class="map-label">${n.label} ${pct}%</div>
+      <div class="map-sprite">${enemySprite(ENEMIES[n.id],'map')}</div>
+    </div>`;
+  }).join('');
+  const player=`<div class="map-thing free-entity map-player" id="map-player" style="left:calc(${worldPlayer.x} * var(--tile));top:calc(${worldPlayer.y} * var(--tile))"><div class="map-sprite">${characterSprite('cute-player idle','map-char-cute')}</div></div>`;
+  setMain(`
+    <div class="world-shell">
+      <div class="world-hud">
+        <button class="back-btn" onclick="showHome()">Back Home</button>
+        <div class="coin-pill">${c.name} - ${c.title} - Level ${S.level}</div>
+        <div class="weapon-pill">${ravenSprite(weapon.icon)} ${weapon.name}</div>
+        <div class="battle-actions" style="margin-top:0">
+          <button class="btn btn-ghost btn-sm" onclick="showAdventure()">Zone List</button>
+          <button class="btn btn-ghost btn-sm" onclick="showWeapons()">Weapons</button>
+          <button class="btn btn-ghost btn-sm" onclick="showShop()">Shop</button>
+          <button class="btn btn-ghost btn-sm" onclick="showLeaderboard()">Leaderboard</button>
+        </div>
+      </div>
+      <div class="world-wrap">
+        <div class="world-camera">
+          <div class="tile-map" id="tile-map">${tiles.join('')}${decos}${items}${npcs}${player}</div>
+        </div>
+      </div>
+      <div class="world-dialogue" id="world-dialogue">${worldMsg}</div>
+      <div class="dpad">
+        <button class="up" onpointerdown="setPadKey('up',true)" onpointerup="setPadKey('up',false)" onpointercancel="setPadKey('up',false)">Up</button>
+        <button class="left" onpointerdown="setPadKey('left',true)" onpointerup="setPadKey('left',false)" onpointercancel="setPadKey('left',false)">Left</button>
+        <button class="act" onclick="interactWorld()">E</button>
+        <button class="right" onpointerdown="setPadKey('right',true)" onpointerup="setPadKey('right',false)" onpointercancel="setPadKey('right',false)">Right</button>
+        <button class="down" onpointerdown="setPadKey('down',true)" onpointerup="setPadKey('down',false)" onpointercancel="setPadKey('down',false)">Down</button>
+      </div>
+    </div>`);
+  requestAnimationFrame(updateWorldView);
+}
+function worldTile(x,y){
+  if(y===0||x===0||x===WORLD_W-1||y===WORLD_H-1)return 'wall';
+  const water=(x>=28&&y>=13&&y<=24)||(x>=29&&y>=10&&y<=12)||(x>=2&&x<=5&&y>=12&&y<=14);
+  const nearWater=(x>=25&&y>=10&&y<=24)||(x>=1&&x<=7&&y>=10&&y<=15);
+  const path=(x>=17&&x<=18&&y>=3&&y<=23)||(y>=13&&y<=14&&x>=5&&x<=31)||(x>=6&&x<=7&&y>=6&&y<=14)||(x>=24&&x<=25&&y>=18&&y<=23)||(y>=21&&y<=22&&x>=10&&x<=31)||(y>=7&&y<=8&&x>=18&&x<=30);
+  const floor=(x>=12&&x<=15&&y>=5&&y<=8)||(x>=20&&x<=23&&y>=5&&y<=8)||(x>=5&&x<=9&&y>=15&&y<=18)||(x>=31&&x<=33&&y>=19&&y<=22);
+  if(water)return 'water';
+  if(nearWater&&!path&&!floor)return hashTile(x,y)%3===0?'shore':'sand';
+  if(path)return hashTile(x,y)%4===0?'path path2':'path';
+  if(floor)return 'floor';
+  const h=hashTile(x,y);
+  if(h%11===0)return 'flowers';
+  if(h%5===0)return 'grass grass2';
+  return 'grass';
+}
+function tilePx(){
+  const cam=document.querySelector('.world-camera');
+  if(!cam)return GAME.tileSize;
+  const raw=getComputedStyle(cam).getPropertyValue('--tile').trim();
+  return Number(raw.replace('px',''))||GAME.tileSize;
+}
+function viewTiles(){
+  const cam=document.querySelector('.world-camera');
+  if(!cam)return {w:WORLD_VIEW_W,h:WORLD_VIEW_H};
+  const style=getComputedStyle(cam);
+  return {
+    w:Number(style.getPropertyValue('--vieww').trim())||WORLD_VIEW_W,
+    h:Number(style.getPropertyValue('--viewh').trim())||WORLD_VIEW_H
+  };
+}
+function getCamera(){
+  const view=viewTiles();
+  return {
+    x:Math.max(0,Math.min(WORLD_W-view.w,worldPlayer.x-(view.w/2))),
+    y:Math.max(0,Math.min(WORLD_H-view.h,worldPlayer.y-(view.h/2)))
+  };
+}
+function isBlocked(x,y){
+  if(x<0||y<0||x>=WORLD_W||y>=WORLD_H)return true;
+  const t=worldTile(Math.floor(x),Math.floor(y));
+  return t==='wall'||t==='water';
+}
+function isBlockedFree(x,y){
+  const r=FREE_MOVE.radius;
+  const samples=[[x-r,y-r],[x+r,y-r],[x-r,y+r],[x+r,y+r],[x,y-r],[x,y+r],[x-r,y],[x+r,y]];
+  if(samples.some(([sx,sy])=>isBlocked(sx,sy)))return true;
+  if(WORLD_DECOS.some(d=>{
+    if(!['tree','small-tree','house','tower','fence'].includes(d.type))return false;
+    const w=d.type==='house'||d.type==='tower'?1.35:d.type==='fence'?1.15:0.75;
+    const h=d.type==='house'||d.type==='tower'?1.15:d.type==='fence'?0.45:0.75;
+    return Math.abs(x-d.x)<w&&Math.abs(y-d.y)<h;
+  }))return true;
+  return WORLD_NPCS.some(n=>Math.hypot(n.x-x,n.y-y)<.68);
+}
+function moveWorld(dx,dy){
+  const nx=worldPlayer.x+dx,ny=worldPlayer.y+dy;
+  if(!isBlockedFree(nx,ny))worldPlayer={x:nx,y:ny};
+  const near=getNearbyNpc();
+  worldMsg=near?`${near.label}: Press E to battle ${ENEMIES[near.id].name}.`:'Explore the academy and find grammar trainers.';
+  S.worldPos={...worldPlayer};
+  updateWorldView();
+}
+function getNearbyNpc(){
+  return WORLD_NPCS.find(n=>Math.hypot(n.x-worldPlayer.x,n.y-worldPlayer.y)<1.35);
+}
+function interactWorld(){
+  const npc=getNearbyNpc();
+  if(!npc){worldMsg='No trainer nearby. Walk next to one and press E.';updateWorldView();return;}
+  talkToNpc(npc.id);
+}
+function updateWorldView(){
+  const cam=getCamera(),map=byId('tile-map'),player=byId('map-player'),dialogue=byId('world-dialogue'),px=tilePx();
+  if(map)map.style.transform=`translate(${-cam.x*px}px,${-cam.y*px}px)`;
+  if(player){
+    player.style.left=`${worldPlayer.x*px}px`;
+    player.style.top=`${worldPlayer.y*px}px`;
+    player.querySelector('.cute-player')?.classList.toggle('idle',!FREE_MOVE.walking);
+  }
+  if(dialogue)dialogue.textContent=worldMsg;
+}
+function talkToNpc(id){
+  const enemy=ENEMIES[id];
+  worldMsg=`${enemy.name}: ${enemy.taunt}`;
+  startBattle(id);
+}
+function showAdventure(){
+  if(!S.classId){showStarterSelect();return;}
+  updateHeader();
+  const c=getClass();
+  const zones=TOPICS.map(t=>{
+    const st=S.topicStats[t.id],pct=Math.round((st.correct/st.total)*100),enemy=ENEMIES[t.id];
+    return `
+      <div class="zone" style="--z1:${t.color}cc;--z2:#11101d" onclick="startBattle('${t.id}')">
+        <div class="zone-icon">${t.emoji}</div>
+        <div class="zone-title">${t.name}</div>
+        <div class="zone-copy">${enemy.name} waits here. Win battles to earn coins and XP.</div>
+        <div class="zone-progress"><div class="zone-fill" style="width:${pct}%"></div></div>
+      </div>`;
+  }).join('');
+  setMain(`
+    <div class="page">
+      <button class="back-btn" onclick="showHome()">← Back</button>
+      <div class="pg-title">Adventure Map</div>
+      <div class="pg-sub">Walk into a zone, answer questions, and attack through Spanish practice.</div>
+      <div class="adventure-top">
+        <div class="hero-panel">
+          <div class="hero-creature">
+            <div class="big-sprite class-preview" style="color:${c.color}">${characterSprite('cute-player idle','select-char')}</div>
+            <div>
+              <div class="hero-name">${c.name}</div>
+              <div class="hero-meta">Level ${S.level} ${c.title}<br>${c.bonus}</div>
+              <div class="coin-pill">🪙 ${S.coins||0} coins</div>
+            </div>
+          </div>
+          <div class="battle-actions">
+            <button class="btn btn-ghost btn-sm" onclick="showStarterSelect()">Switch Companion</button>
+            <button class="btn btn-ghost btn-sm" onclick="showWeapons()">Weapons</button>
+            <button class="btn btn-ghost btn-sm" onclick="showShop()">Cosmetic Shop</button>
+            <button class="btn btn-ghost btn-sm" onclick="showIconGallery()">Icon Gallery</button>
+          </div>
+        </div>
+        <div class="quest-panel">
+          <div class="sec-title">Daily Quest Board</div>
+          <div class="hero-meta">Win 1 battle: +25 coins<br>Reach a 5 streak: bonus attack<br>Beat the Final Exam Titan to unlock the boss badge.</div>
+          <div class="battle-actions">
+            <button class="btn btn-fire btn-sm" onclick="startBattle('boss')">Enter Final Boss</button>
+            <button class="btn btn-ghost btn-sm" onclick="showLeaderboard()">Leaderboard</button>
+          </div>
+        </div>
+      </div>
+      <div class="world-map">${zones}</div>
+    </div>`);
+}
+function showShop(){
+  const items=[
+    {id:'flame_frame',name:'Flame Frame',cost:80,icon:[1,37]},
+    {id:'storm_aura',name:'Storm Aura',cost:120,icon:[5,40]},
+    {id:'gold_title',name:'Gold Title',cost:160,icon:[5,0]},
+    {id:'shield_badge',name:'Shield Badge',cost:140,icon:[3,12]},
+    {id:'ruby_charm',name:'Ruby Charm',cost:100,icon:[2,10]},
+    {id:'ancient_key',name:'Ancient Key',cost:180,icon:[9,5]}
+  ];
+  const html=items.map(item=>{
+    const owned=S.inventory.includes(item.id);
+    return `<div class="shop-item">
+      ${ravenIcon(item.icon[0],item.icon[1])}
+      <div class="hero-name">${item.name}</div>
+      <div class="hero-meta">${owned?'Owned':`${item.cost} coins`}</div>
+      <button class="btn ${owned?'btn-ghost':'btn-fire'} btn-sm btn-full" onclick="buyItem('${item.id}',${item.cost})">${owned?'Equipped':'Buy'}</button>
+    </div>`;
+  }).join('');
+  setMain(`<div class="page"><button class="back-btn" onclick="showWorld()">← Back</button><div class="pg-title">Cosmetic Shop</div><div class="pg-sub">Spend battle coins on profile flex items. First pass is cosmetic only.</div><div class="coin-pill">🪙 ${S.coins||0} coins</div><div class="mini-shop">${html}</div></div>`);
+}
+function ravenIcon(col,row){
+  return `<div class="raven-icon" style="background-position:-${col*64}px -${row*64}px"></div>`;
+}
+function ravenSprite(icon){
+  return `<span class="raven-inline" style="background-position:-${icon[0]*32}px -${icon[1]*32}px"></span>`;
+}
+function characterSprite(anim,extra=''){
+  return `<div class="char-sprite ${anim} ${extra}"></div>`;
+}
+function enemySprite(enemy,where='map',attack=false){
+  const kind=(enemy&&enemy.kind)||'orc';
+  if(kind==='slime')return characterSprite('cute-slime',where==='battle'?'battle-char-slime':'map-char-slime');
+  if(kind==='skeleton')return characterSprite('cute-skeleton',where==='battle'?'battle-char-cute':'map-char-cute');
+  return characterSprite(`cute-orc${attack?' attack':''}`,where==='battle'?'battle-char-orc':'map-char-orc');
+}
+function playerBattleSprite(attack=false){
+  if(!attack)return characterSprite('cute-player idle','battle-char-cute');
+  return characterSprite(classAttackClass(getClass()),'battle-char');
+}
+function showIconGallery(){
+  const picks=[
+    ['Potion',0,0],['Star',12,0],['Trophy',14,0],['Key',0,5],
+    ['Fire Gem',0,10],['Ruby',2,10],['Shield',3,12],['Blue Shield',4,12],
+    ['Fire Spell',1,37],['Ice Spell',5,40],['Green Spell',3,45],['Question Mark',6,61],
+    ['Sword',9,67],['Armor',5,78],['Cloak',12,85],['Dragon Badge',2,95]
+  ];
+  const html=picks.map(([name,col,row])=>`
+    <div class="icon-tile">
+      ${ravenIcon(col,row)}
+      <div class="icon-label">${name}</div>
+    </div>
+  `).join('');
+  setMain(`
+    <div class="page">
+      <button class="back-btn" onclick="showWorld()">← Back</button>
+      <div class="pg-title">Raven Icon Gallery</div>
+      <div class="pg-sub">These are pulled from <code>assets/raven-icons/raven-icons-64.png</code>. Use them for shop items, attacks, badges, and rewards.</div>
+      <div class="icon-grid">${html}</div>
+    </div>`);
+}
+async function buyItem(id,cost){
+  if(S.inventory.includes(id)){showToast('Already owned','✅');return;}
+  if((S.coins||0)<cost){showToast('Not enough coins yet','🪙');return;}
+  S.coins-=cost;
+  S.inventory.push(id);
+  await saveState();
+  showShop();
+}
+
+function showTopics(){
+  const cardsHtml=TOPICS.map(t=>{
+    const st=S.topicStats[t.id],pct=Math.round((st.correct/st.total)*100);
+    return `<div class="t-card" style="--tc:${t.color}" onclick="startQuiz('${t.id}')">
+      <div class="t-hdr"><div style="font-size:26px">${t.emoji}</div><div style="font-weight:800;color:${t.color}">${pct}%</div></div>
+      <div class="t-name">${t.name}</div><div class="t-desc">${t.desc}</div>
+      <div class="t-stats"><span>✓ ${st.correct}/${st.total}</span><span>📝 ${st.attempted} attempts</span></div>
+    </div>`;
+  }).join('');
+  setMain(`<div class="page"><button class="back-btn" onclick="showHome()">← Back</button><div class="pg-title">Choose Your Topic</div><div class="pg-sub">${Object.values(QDB).flat().length} starter questions included. Paste your full QDB over the sample bank to restore all 240.</div><div class="topic-grid">${cardsHtml}<div class="boss-card" onclick="startBoss()"><div><div class="boss-title">💀 FINAL BOSS — ALL TOPICS</div><div class="boss-desc">${S.boss.beaten?'✅ Beaten! Try again for glory':'Mix of everything • 3 lives • Timed'}</div></div><button class="btn btn-fire">Challenge!</button></div></div></div>`);
+}
+function showLeaderboard(){
+  const rows=[...PLAYERS].sort((a,b)=>(b.state.totalXP||0)-(a.state.totalXP||0)).map((p,i)=>{
+    const st=p.state,active=p.id===activePlayerId,photo=p.photo?`<img src="${p.photo}" class="avatar" alt="${escapeHtml(p.name)}">`:`<div class="avatar">🔥</div>`;
+    const acc=st.totalQ?Math.round((st.totalCorrect/st.totalQ)*100):0;
+    return `<div class="mi" style="${active?'border-color:var(--fire);box-shadow:0 0 18px var(--fire-g)':''}">
+      <div class="mi-hdr">
+        <div class="mi-name"><span style="color:var(--str);font-weight:800">#${i+1}</span>${photo}<span>${escapeHtml(p.name)}</span>${active?'<span class="tag" style="background:var(--fire-g);color:var(--fire)">Active</span>':''}</div>
+        <div class="mi-pct" style="color:var(--str)">${st.totalXP||0} XP</div>
+      </div>
+      <div class="t-stats" style="margin-bottom:12px"><span>Lvl ${st.level}</span><span>${acc}% acc</span><span>${st.maxStreak||0} best streak</span><span>🪙 ${st.coins||0}</span><span>${st.battleWins||0} wins</span></div>
+      <button class="btn btn-ghost btn-sm" onclick="switchPlayer('${p.id}')">Play as ${escapeHtml(p.name)}</button>
+      ${PLAYERS.length>1?`<button class="btn btn-ghost btn-sm" onclick="deletePlayer('${p.id}')">Delete</button>`:''}
+    </div>`;
+  }).join('');
+  setMain(`
+    <div class="page">
+      <button class="back-btn" onclick="showHome()">← Back</button>
+      <div class="pg-title">Leaderboard</div>
+      <div class="pg-sub">${isOnline?'Cloud leaderboard is connected.':'Local fallback is active. Create the Supabase table/policies to sync devices.'}</div>
+      <div class="form">
+        <div class="sec-title">Add Friend</div>
+        <input id="new-player-name" class="field" placeholder="Name">
+        <input id="new-player-photo" class="file" type="file" accept="image/*">
+        <button class="btn btn-fire btn-full" onclick="addPlayer()">Add Player</button>
+      </div>
+      <div class="mlist">${rows}</div>
+      <div class="divider"></div>
+      <div class="h-row">
+        <button class="btn btn-ghost btn-full" onclick="exportLeaderboard()">Export Backup</button>
+        <button class="btn btn-ghost btn-full" onclick="byId('import-file').click()">Import Backup</button>
+      </div>
+      <input id="import-file" type="file" accept="application/json" style="display:none" onchange="importLeaderboard(event)">
+    </div>`);
+}
+function addPlayer(){
+  const name=byId('new-player-name').value.trim(),file=byId('new-player-photo').files[0];
+  if(!name){showToast('Add a name first','⚠️');return;}
+  const finish=async photo=>{
+    const id=newId();
+    PLAYERS.push({id,name,photo,state:defaultState()});
+    activePlayerId=id;
+    S=PLAYERS.find(p=>p.id===id).state;
+    normalizeState();
+    await savePlayers();
+    showLeaderboard();
+  };
+  if(!file){finish('');return;}
+  const reader=new FileReader();reader.onload=e=>finish(e.target.result);reader.readAsDataURL(file);
+}
+async function switchPlayer(id){await saveState();activePlayerId=id;S=PLAYERS.find(p=>p.id===id).state;normalizeState();await savePlayers();showHome();}
+async function deletePlayer(id){
+  if(PLAYERS.length<=1)return;
+  const p=PLAYERS.find(x=>x.id===id);
+  if(!confirm(`Delete ${p.name}?`))return;
+  PLAYERS=PLAYERS.filter(x=>x.id!==id);
+  if(activePlayerId===id){activePlayerId=PLAYERS[0].id;S=PLAYERS[0].state;}
+  localStorage.setItem(STORE,JSON.stringify(PLAYERS));
+  localStorage.setItem('ntc_active_player',activePlayerId);
+  if(DB){
+    try{
+      const {error}=await DB.from('players').delete().eq('id',id);
+      if(error)throw error;
+      isOnline=true;
+    }catch(e){
+      isOnline=false;
+      showToast('Deleted locally only. Check Supabase policies.','⚠️');
+    }
+  }
+  await savePlayers();
+  showLeaderboard();
+}
+function exportLeaderboard(){
+  const data=JSON.stringify({version:1,players:PLAYERS},null,2);
+  const blob=new Blob([data],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='notthatcooked-leaderboard.json';
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+function importLeaderboard(ev){
+  const file=ev.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=async ()=>{
+    try{
+      const data=JSON.parse(reader.result);
+      if(!Array.isArray(data.players))throw new Error('bad file');
+      PLAYERS=data.players;activePlayerId=PLAYERS[0].id;S=PLAYERS[0].state;normalizeState();
+      localStorage.setItem(STORE,JSON.stringify(PLAYERS));
+      localStorage.setItem('ntc_active_player',activePlayerId);
+      if(DB){
+        const rows=PLAYERS.map(playerToRow);
+        const {error}=await DB.from('players').upsert(rows);
+        if(error)throw error;
+        isOnline=true;
+      }
+      await savePlayers();
+      showLeaderboard();
+    }catch(e){showToast('Could not import that file','⚠️');}
+  };
+  reader.readAsText(file);
+}
+function startQuiz(topicId,opts={}){
+  let questions=opts.questions||[...QDB[topicId]];
+  if(!opts.noShuffle)questions=shuffle(questions).slice(0,opts.limit||questions.length);
+  QS={topicId,questions,idx:0,correct:0,startTime:Date.now(),answered:false,boss:!!opts.boss,lives:opts.lives??null,timed:!!opts.timed,questionStartTime:0};
+  renderQuestion();
+}
+function startBoss(){
+  const all=[];TOPICS.forEach(t=>QDB[t.id].forEach(q=>all.push({...q,_topic:t.id})));
+  startQuiz('boss',{questions:shuffle(all).slice(0,20),noShuffle:true,boss:true,lives:CFG.BOSS_LIVES,timed:true});
+}
+
+function startBattle(topicId){
+  if(!S.classId){showStarterSelect();return;}
+  const all=[];
+  if(topicId==='boss')TOPICS.forEach(t=>QDB[t.id].forEach(q=>all.push({...q,_topic:t.id})));
+  else QDB[topicId].forEach(q=>all.push({...q,_topic:topicId}));
+  const enemy=ENEMIES[topicId];
+  const maxPlayer=110+(S.level*5);
+  const maxEnemy=enemy.hp+(topicId==='boss'?S.level*3:S.level*2);
+  BS={
+    topicId,
+    enemy,
+    questions:shuffle(all),
+    idx:0,
+    playerHP:maxPlayer,
+    maxPlayerHP:maxPlayer,
+    enemyHP:maxEnemy,
+    maxEnemyHP:maxEnemy,
+    answered:false,
+    log:enemy.taunt,
+    correct:0,
+    wrong:0,
+    specialCharge:0,
+    specialReady:false,
+    started:Date.now()
+  };
+  renderBattle();
+}
+function renderBattle(){
+  if(BS.playerHP<=0){showBattleLose();return;}
+  if(BS.enemyHP<=0){showBattleWin();return;}
+  const c=getClass(),weapon=getWeapon(),q=BS.questions[BS.idx%BS.questions.length],topic=TOPICS.find(t=>t.id===(q._topic||BS.topicId));
+  BS.answered=false;
+  BS.questionStartTime=Date.now();
+  const enemyPct=Math.max(0,Math.round((BS.enemyHP/BS.maxEnemyHP)*100));
+  const playerPct=Math.max(0,Math.round((BS.playerHP/BS.maxPlayerHP)*100));
+  const opts=q.opts.map((o,i)=>`<button class="opt" id="bopt-${i}" onclick="answerBattle(${i},event)"><div class="okey">${String.fromCharCode(65+i)}</div>${o}</button>`).join('');
+  setMain(`
+    <div class="battle-arena">
+      <button class="back-btn" onclick="showWorld()">Flee Battle</button>
+      <div class="battle-stage polished-battle">
+        <div class="battle-side player-side">
+          <div class="battle-platform"><div class="battle-entity" id="player-sprite">${playerBattleSprite(false)}</div></div>
+          <div class="hp-card">
+            <div class="hp-row"><span>${c.name}</span><span>${Math.max(0,BS.playerHP)} HP</span></div>
+            <div class="hp-bar"><div class="hp-fill" style="width:${playerPct}%"></div></div>
+            <div class="weapon-pill" style="margin-top:8px">${ravenSprite(weapon.icon)} ${weapon.name}</div>
+          </div>
+        </div>
+        <div class="battle-side enemy-side">
+          <div class="hp-card">
+            <div class="hp-row"><span>${BS.enemy.name}</span><span>${Math.max(0,BS.enemyHP)} HP</span></div>
+            <div class="hp-bar"><div class="hp-fill" style="width:${enemyPct}%;background:linear-gradient(90deg,var(--err),var(--fire))"></div></div>
+          </div>
+          <div class="battle-platform"><div class="battle-entity" id="enemy-sprite">${enemySprite(BS.enemy,'battle')}</div></div>
+        </div>
+      </div>
+      <div class="battle-dialogue">${BS.log}</div>
+      <div class="battle-question">
+        <div class="q-hdr"><span class="q-tlbl" style="color:${topic?.color||'var(--fire)'}">${topic?.name||'Mixed Battle'}</span><span class="q-cnt">Round ${BS.idx+1}</span></div>
+        <div class="q-text" style="margin-bottom:16px">${q.q}</div>
+        <div class="opts">${opts}</div>
+        <div class="fb-box" id="fb-box"></div>
+        <button class="btn btn-ghost btn-full special-btn" id="special-btn" onclick="useSpecialAttack()" ${BS.specialReady?'':'disabled'}>${c.special} ${BS.specialReady?'READY':'charges on correct answers'}</button>
+        <button class="btn btn-fire btn-full" id="battle-next" style="display:none" onclick="nextBattleRound()">Next Strike</button>
+      </div>
+    </div>`);
+}
+function answerBattle(chosen,ev){
+  if(BS.answered)return;
+  BS.answered=true;
+  const c=getClass(),weapon=getWeapon(),q=BS.questions[BS.idx%BS.questions.length],correct=chosen===q.ans;
+  document.querySelectorAll('.opt').forEach((b,i)=>{b.disabled=true;if(i===q.ans)b.classList.add('hit');else if(i===chosen&&!correct)b.classList.add('miss');});
+  const fb=byId('fb-box');
+  if(correct){
+    BS.correct++;
+    BS.specialCharge++;
+    BS.specialReady=BS.specialCharge>=3;
+    S.streak++;
+    S.totalCorrect++;
+    S.totalQ++;
+    S.maxStreak=Math.max(S.maxStreak,S.streak);
+    const topicId=q._topic||BS.topicId;
+    if(topicId&&S.topicStats[topicId])S.topicStats[topicId].correct=Math.min(S.topicStats[topicId].total,S.topicStats[topicId].correct+1);
+    let damage=24+Math.floor(S.streak/3)*5+(q.diff||1)*2+weapon.damage;
+    if(c.id==='swordsman'&&S.streak>=3)damage+=8;
+    const quick=(Date.now()-(BS.questionStartTime||Date.now()))<4000;
+    if(c.id==='archer'&&quick)damage+=10;
+    if(c.id==='mage'&&BS.specialCharge%4===0)BS.playerHP=Math.min(BS.maxPlayerHP,BS.playerHP+10);
+    const crit=Math.random()<weapon.crit;
+    if(crit)damage=Math.round(damage*1.5);
+    BS.enemyHP=Math.max(0,BS.enemyHP-damage);
+    addXP(CFG.XP_BASE+Math.floor(S.streak/5)*CFG.XP_STREAK,ev?ev.clientX:window.innerWidth/2,ev?ev.clientY:240);
+    const playerSprite=byId('player-sprite');
+    if(playerSprite)playerSprite.innerHTML=playerBattleSprite(true);
+    byId('enemy-sprite')?.classList.add('hit');
+    BS.log=`${c.name} used ${weapon.name} with ${topicAttackName(topicId)} for ${damage} damage${crit?' (CRIT)':''}!`;
+    fb.className='fb-box ok';
+    fb.textContent=q.exp;
+    if(S.streak>0&&S.streak%5===0)showCombo(S.streak);
+    checkBadges({speedster:false,topicComplete:isTopicComplete(topicId)});
+  }else{
+    BS.wrong++;
+    S.streak=0;
+    S.totalQ++;
+    const topicId=q._topic||BS.topicId;
+    if(topicId&&S.topicStats[topicId])S.topicStats[topicId].attempted=(S.topicStats[topicId].attempted||0)+1;
+    const hit=16+Math.floor(BS.idx/3)*3+(q.diff||1)*3;
+    BS.playerHP=Math.max(0,BS.playerHP-hit);
+    const enemyEl=byId('enemy-sprite');
+    if(enemyEl)enemyEl.innerHTML=enemySprite(BS.enemy,'battle',true);
+    byId('player-sprite')?.classList.add('hit');
+    BS.log=`${BS.enemy.name} countered for ${hit} damage.`;
+    fb.className='fb-box err';
+    fb.textContent='❌ '+q.exp;
+    updateHeader();
+  }
+  saveState();
+  byId('battle-next').style.display='block';
+  if(BS.enemyHP<=0||BS.playerHP<=0)setTimeout(()=>{BS.enemyHP<=0?showBattleWin():showBattleLose();},900);
+}
+function nextBattleRound(){
+  BS.idx++;
+  renderBattle();
+}
+function topicAttackName(topicId){
+  const names={pt:'Preterite Slash',perf:'Perfect Pulse',ac:'Accent Beam',fi:'Oracle Call',pp:'Path Strike',se:'Mirror Break',sub:'Subjunctive Spiral',pps:'Perfect Storm',boss:'Final Review Burst'};
+  return names[topicId]||'Grammar Strike';
+}
+function classAttackClass(c){
+  if(c.id==='archer')return 'soldier-archer';
+  if(c.id==='mage')return 'soldier-mage';
+  return 'soldier-sword';
+}
+function useSpecialAttack(){
+  if(!BS.specialReady||BS.answered)return;
+  const c=getClass(),weapon=getWeapon();
+  BS.answered=true;
+  BS.specialReady=false;
+  BS.specialCharge=0;
+  let damage=42+S.level*2+weapon.damage;
+  if(c.id==='swordsman')damage+=18;
+  if(c.id==='archer')damage+=12;
+  if(c.id==='mage'){damage+=8;BS.playerHP=Math.min(BS.maxPlayerHP,BS.playerHP+24);}
+  BS.enemyHP=Math.max(0,BS.enemyHP-damage);
+  const playerSprite=byId('player-sprite');
+  if(playerSprite)playerSprite.innerHTML=playerBattleSprite(true);
+  byId('enemy-sprite')?.classList.add('hit');
+  BS.log=`${c.special}! ${c.name} used ${weapon.name} for ${damage} bonus damage${c.id==='mage'?' and restored HP':''}.`;
+  const fb=byId('fb-box');
+  fb.className='fb-box ok';
+  fb.textContent=`${c.special}: ${c.desc}`;
+  document.querySelectorAll('.opt').forEach(b=>b.disabled=true);
+  byId('battle-next').style.display='block';
+  saveState();
+  if(BS.enemyHP<=0)setTimeout(showBattleWin,700);
+}
+async function showBattleWin(){
+  const c=getClass();
+  let coins=BS.enemy.reward+Math.max(0,BS.correct-BS.wrong)*4;
+  if(c.id==='archer')coins+=8;
+  if(c.id==='mage')BS.playerHP=Math.min(BS.maxPlayerHP,BS.playerHP+18);
+  S.coins=(S.coins||0)+coins;
+  S.battleWins=(S.battleWins||0)+1;
+  if(BS.topicId==='boss'){S.boss.beaten=true;checkBadges({boss:true});}
+  const unlocked=refreshWeaponUnlocks(true);
+  await saveState();
+  setMain(`
+    <div class="page">
+      <div class="reward-box">
+        <div class="reward-sprite" style="display:flex;justify-content:center">${playerBattleSprite(false)}</div>
+        <div class="reward-title">Victory!</div>
+        <div class="r-sub">${BS.enemy.name} was defeated in ${BS.correct+BS.wrong} rounds.${unlocked.length?` New weapon: ${unlocked.join(', ')}.`:''}</div>
+        <div class="r-grid">
+          <div class="r-card"><div class="r-cn" style="color:var(--ok)">${BS.correct}</div><div class="r-cl">Correct</div></div>
+          <div class="r-card"><div class="r-cn" style="color:var(--err)">${BS.wrong}</div><div class="r-cl">Wrong</div></div>
+          <div class="r-card"><div class="r-cn" style="color:var(--str)">${coins}</div><div class="r-cl">Coins</div></div>
+          <div class="r-card"><div class="r-cn" style="color:var(--xp)">${S.level}</div><div class="r-cl">Level</div></div>
+        </div>
+        <div class="r-acts">
+          <button class="btn btn-fire btn-full" onclick="showWorld()">Back to Map</button>
+          <button class="btn btn-ghost btn-full" onclick="showWeapons()">Weapons</button>
+          <button class="btn btn-ghost btn-full" onclick="startBattle('${BS.topicId}')">Rematch</button>
+          <button class="btn btn-ghost btn-full" onclick="showLeaderboard()">Leaderboard</button>
+        </div>
+      </div>
+    </div>`);
+}
+function showBattleLose(){
+  setMain(`
+    <div class="page">
+      <div class="reward-box">
+        <div class="reward-sprite" style="display:flex;justify-content:center">${enemySprite(BS.enemy,'battle')}</div>
+        <div class="reward-title" style="background:linear-gradient(135deg,var(--err),var(--fire));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">Defeated</div>
+        <div class="r-sub">${BS.enemy.name} won this round. Review and try again.</div>
+        <div class="r-acts">
+          <button class="btn btn-fire btn-full" onclick="startBattle('${BS.topicId}')">Try Again</button>
+          <button class="btn btn-ghost btn-full" onclick="showWorld()">Back to Map</button>
+        </div>
+      </div>
+    </div>`);
+}
+function renderQuestion(){
+  if(QS.idx>=QS.questions.length){showResults();return;}
+  const q=QS.questions[QS.idx],total=QS.questions.length,pct=Math.round((QS.idx/total)*100),topic=TOPICS.find(t=>t.id===(q._topic||QS.topicId));
+  QS.answered=false;QS.questionStartTime=Date.now();
+  const opts=q.opts.map((o,i)=>`<button class="opt" id="opt-${i}" onclick="answerQ(${i},event)"><div class="okey">${String.fromCharCode(65+i)}</div>${o}</button>`).join('');
+  const timerHtml=QS.timed?`<div class="timer-bar"><div class="timer-fill" id="timer-fill" style="width:100%;background:var(--ok)"></div></div>`:'';
+  const livesHtml=QS.lives!==null?`<div style="font-size:18px;margin-bottom:12px"><span style="font-size:11px;color:var(--muted);margin-right:6px">Lives:</span>${Array.from({length:CFG.BOSS_LIVES},(_,i)=>i<QS.lives?'❤️':'🖤').join('')}</div>`:'';
+  setMain(`<div class="quiz"><div class="q-hdr"><span class="q-tlbl" style="color:${topic?.color||'var(--fire)'}">${topic?.name||'Mixed'}</span><span class="q-cnt">${QS.idx+1} / ${total}</span></div><div class="q-prog"><div class="q-pfill" style="width:${pct}%"></div></div>${timerHtml}${livesHtml}<div class="q-card" id="q-card"><div class="q-text">${q.q}</div></div><div class="opts">${opts}</div><div class="fb-box" id="fb-box"></div><button class="btn btn-fire btn-full" id="q-next" style="display:none" onclick="nextQ()">Next →</button></div>`);
+  if(QS.timed)startTimer();
+}
+function startTimer(){
+  clearInterval(timerInterval);
+  const duration=18000,start=Date.now(),fill=byId('timer-fill');
+  timerInterval=setInterval(()=>{
+    if(QS.answered){clearInterval(timerInterval);return;}
+    const elapsed=Date.now()-start,pct=Math.max(0,100-(elapsed/duration)*100);
+    if(fill){fill.style.width=pct+'%';fill.style.background=pct>50?'var(--ok)':pct>25?'var(--str)':'var(--err)';}
+    if(elapsed>=duration&&!QS.answered){clearInterval(timerInterval);autoTimeOut();}
+  },50);
+}
+function autoTimeOut(){
+  QS.answered=true;
+  const q=QS.questions[QS.idx];
+  document.querySelectorAll('.opt').forEach((b,i)=>{b.disabled=true;if(i===q.ans)b.classList.add('show');});
+  byId('q-card').classList.add('err');
+  const fb=byId('fb-box');fb.className='fb-box err';fb.textContent="⏰ Time's up! "+q.exp;
+  handleWrong();byId('q-next').style.display='block';
+}
+function answerQ(chosen,ev){
+  if(QS.answered)return;
+  QS.answered=true;clearInterval(timerInterval);
+  const q=QS.questions[QS.idx],correct=chosen===q.ans,elapsed=(Date.now()-QS.questionStartTime)/1000;
+  document.querySelectorAll('.opt').forEach((b,i)=>{b.disabled=true;if(i===q.ans)b.classList.add('hit');else if(i===chosen&&!correct)b.classList.add('miss');});
+  const card=byId('q-card'),fb=byId('fb-box');
+  if(correct){card.classList.add('ok');fb.className='fb-box ok';fb.textContent=q.exp;handleCorrect(ev,elapsed<3);}
+  else{card.classList.add('err');fb.className='fb-box err';fb.textContent='❌ '+q.exp;handleWrong();}
+  byId('q-next').style.display='block';
+}
+function handleCorrect(ev,speedster){
+  QS.correct++;S.streak++;S.totalCorrect++;S.totalQ++;S.maxStreak=Math.max(S.maxStreak,S.streak);
+  const q=QS.questions[QS.idx],topicId=q._topic||QS.topicId;
+  if(topicId&&S.topicStats[topicId])S.topicStats[topicId].correct=Math.min(S.topicStats[topicId].total,S.topicStats[topicId].correct+1);
+  const xpGain=CFG.XP_BASE+Math.floor(S.streak/5)*CFG.XP_STREAK;
+  addXP(xpGain,ev?ev.clientX:window.innerWidth/2,ev?ev.clientY:200);
+  if(S.streak>0&&S.streak%5===0)showCombo(S.streak);
+  checkBadges({speedster,topicComplete:isTopicComplete(topicId)});saveState();
+}
+function handleWrong(){
+  S.streak=0;S.totalQ++;
+  const q=QS.questions[QS.idx],topicId=q._topic||QS.topicId;
+  if(topicId&&S.topicStats[topicId])S.topicStats[topicId].attempted=(S.topicStats[topicId].attempted||0)+1;
+  if(QS.boss&&QS.lives!==null){QS.lives--;if(QS.lives<=0){setTimeout(showBossFail,600);}}
+  updateHeader();saveState();
+}
+function isTopicComplete(topicId){return topicId&&S.topicStats[topicId]&&S.topicStats[topicId].correct>=S.topicStats[topicId].total;}
+function nextQ(){QS.idx++;if(QS.boss&&QS.lives!==null&&QS.lives<=0){showBossFail();return;}renderQuestion();}
+function showBossFail(){setMain(`<div class="results"><div class="r-big" style="background:linear-gradient(135deg,var(--err),#ff5500);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">GAME<br>OVER</div><div class="r-sub">The boss defeated you. Train harder!</div><div class="r-acts"><button class="btn btn-fire btn-full" onclick="startBoss()">🔄 Try Again</button><button class="btn btn-ghost btn-full" onclick="showTopics()">📚 Back to Topics</button></div></div>`);}
+function showResults(){
+  const total=QS.questions.length,pct=Math.round((QS.correct/total)*100),time=Math.round((Date.now()-QS.startTime)/1000);
+  if(QS.boss&&QS.lives>0){S.boss.beaten=true;checkBadges({boss:true});saveState();}
+  if(pct===100)checkBadges({perfect:true});
+  const msg=pct>=90?'🏆 PERFECT!':pct>=75?'🔥 On Fire!':pct>=60?'💪 Getting There':pct>=40?'😅 Keep Grinding':'💀 You Got Cooked';
+  setMain(`<div class="results"><div class="r-big">${pct}%</div><div class="r-sub">${msg} • ${Math.floor(time/60)}m ${time%60}s</div><div class="r-grid"><div class="r-card"><div class="r-cn" style="color:var(--ok)">${QS.correct}</div><div class="r-cl">Correct</div></div><div class="r-card"><div class="r-cn" style="color:var(--err)">${total-QS.correct}</div><div class="r-cl">Wrong</div></div><div class="r-card"><div class="r-cn" style="color:var(--str)">${S.totalXP}</div><div class="r-cl">Total XP</div></div><div class="r-card"><div class="r-cn" style="color:var(--xp)">${S.level}</div><div class="r-cl">Level</div></div></div><div class="r-acts"><button class="btn btn-fire btn-full" onclick="showTopics()">📚 More Topics</button><button class="btn btn-ghost btn-full" onclick="showLeaderboard()">🏅 Leaderboard</button><button class="btn btn-ghost btn-full" onclick="showHome()">🏠 Home</button></div></div>`);
+}
+function showStats(){
+  const acc=S.totalQ?Math.round((S.totalCorrect/S.totalQ)*100):0;
+  const topicBars=TOPICS.map(t=>{const st=S.topicStats[t.id],pct=Math.round((st.correct/st.total)*100);return `<div class="mi"><div class="mi-hdr"><div class="mi-name"><span>${t.emoji}</span>${t.name}</div><div class="mi-pct" style="color:${t.color}">${pct}%</div></div><div class="mb-out"><div class="mb-in" style="width:${pct}%;background:${t.color}"></div></div></div>`;}).join('');
+  setMain(`<div class="page"><button class="back-btn" onclick="showHome()">← Back</button><div class="pg-title">Your Stats</div><div class="sg"><div class="sc"><div class="scn" style="color:var(--fire)">${S.level}</div><div class="scl">Level</div></div><div class="sc"><div class="scn" style="color:var(--str)">${S.totalXP}</div><div class="scl">Total XP</div></div><div class="sc"><div class="scn" style="color:var(--xp)">${acc}%</div><div class="scl">Accuracy</div></div><div class="sc"><div class="scn" style="color:var(--ok)">${S.totalQ}</div><div class="scl">Questions</div></div></div><div class="sec-title">Topic Progress</div><div class="mlist">${topicBars}</div></div>`);
+}
+function showBadges(){
+  const html=BADGE_DEFS.map(b=>{const earned=S.badges.includes(b.id);return `<div class="bg-card ${earned?'earned':'locked'}"><div class="bg-em">${earned?b.emoji:'🔒'}</div><div class="bg-name">${b.name}</div><div class="bg-desc">${b.desc}</div></div>`;}).join('');
+  setMain(`<div class="page"><button class="back-btn" onclick="showHome()">← Back</button><div class="pg-title">Badges</div><div class="pg-sub">${S.badges.length} / ${BADGE_DEFS.length} unlocked</div><div class="bg-grid">${html}</div></div>`);
+}
+function resetActivePlayer(){
+  if(!confirm('Reset this player only?'))return;
+  S=defaultState();normalizeState();saveState();showToast('Player progress reset','🔥');showHome();
+}
+function floatXP(text,x,y){const el=document.createElement('div');el.className='xpf';el.textContent=text;el.style.left=(x||window.innerWidth/2)+'px';el.style.top=(y||200)+'px';document.body.appendChild(el);setTimeout(()=>el.remove(),1500);}
+function showCombo(n){const msg=n>=10?'⚡ UNSTOPPABLE!':'🔥 ON FIRE!';const el=document.createElement('div');el.className='combo';el.textContent=msg;el.style.color=n>=10?'#a855f7':'#ff5500';document.body.appendChild(el);setTimeout(()=>el.remove(),1400);}
+function showLevelUp(lvl){const el=document.createElement('div');el.className='lup';el.innerHTML=`<div style="font-size:64px;margin-bottom:12px">🎉</div><div class="lup-title">LEVEL ${lvl}!</div><div class="lup-name">${getLevelTitle(lvl)}</div><div class="lup-desc">Keep grinding — you've got this!</div><button class="btn btn-fire btn-lg" onclick="this.closest('.lup').remove()">Let's GO! 🔥</button>`;document.body.appendChild(el);}
+function showToast(msg,emoji=''){const old=document.querySelector('.toast');if(old)old.remove();const el=document.createElement('div');el.className='toast';el.innerHTML=`${emoji?`<span>${emoji}</span>`:''}${msg}`;document.body.appendChild(el);setTimeout(()=>el.remove(),3200);}
+function shuffle(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function byId(id){return document.getElementById(id);}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));}
+function setPadKey(dir,on){
+  const map={up:'w',down:'s',left:'a',right:'d'};
+  if(map[dir])FREE_MOVE.keys[map[dir]]=on;
+}
+function movementIntent(){
+  const k=FREE_MOVE.keys;
+  let dx=0,dy=0;
+  if(k.a||k.arrowleft)dx-=1;
+  if(k.d||k.arrowright)dx+=1;
+  if(k.w||k.arrowup)dy-=1;
+  if(k.s||k.arrowdown)dy+=1;
+  const len=Math.hypot(dx,dy);
+  return len?{dx:dx/len,dy:dy/len}:{dx:0,dy:0};
+}
+function worldTick(ts){
+  if(!FREE_MOVE.last)FREE_MOVE.last=ts;
+  const dt=Math.min(.05,(ts-FREE_MOVE.last)/1000);
+  FREE_MOVE.last=ts;
+  if(byId('tile-map')){
+    const {dx,dy}=movementIntent();
+    const moving=dx||dy;
+    FREE_MOVE.walking=!!moving;
+    if(moving){
+      const step=FREE_MOVE.speed*dt;
+      const nx=worldPlayer.x+dx*step;
+      const ny=worldPlayer.y+dy*step;
+      if(!isBlockedFree(nx,worldPlayer.y))worldPlayer.x=nx;
+      if(!isBlockedFree(worldPlayer.x,ny))worldPlayer.y=ny;
+      const near=getNearbyNpc();
+      worldMsg=near?`${near.label}: Press E to battle ${ENEMIES[near.id].name}.`:'Explore the academy and find grammar trainers.';
+      S.worldPos={...worldPlayer};
+    }
+    updateWorldView();
+  }
+  FREE_MOVE.raf=requestAnimationFrame(worldTick);
+}
+function handleWorldKey(e){
+  const tag=(document.activeElement&&document.activeElement.tagName)||'';
+  if(['INPUT','TEXTAREA','SELECT'].includes(tag))return;
+  const key=e.key.toLowerCase();
+  if(!byId('tile-map'))return;
+  if(['arrowup','arrowdown','arrowleft','arrowright','w','a','s','d'].includes(key)){
+    e.preventDefault();
+    FREE_MOVE.keys[key]=true;
+  }else if(key==='e'||key==='enter'||key===' '){
+    e.preventDefault();
+    interactWorld();
+  }
+}
+function handleWorldKeyUp(e){
+  const key=e.key.toLowerCase();
+  if(['arrowup','arrowdown','arrowleft','arrowright','w','a','s','d'].includes(key)){
+    FREE_MOVE.keys[key]=false;
+    if(byId('tile-map'))saveState();
+  }
+}
+async function init(){
+  setMain('<div class="home"><div class="h-fire">🔥</div><div class="h-sub">Loading leaderboard...</div></div>');
+  await loadPlayers();
+  window.addEventListener('keydown',handleWorldKey);
+  window.addEventListener('keyup',handleWorldKeyUp);
+  if(!FREE_MOVE.raf)FREE_MOVE.raf=requestAnimationFrame(worldTick);
+  window.addEventListener('resize',()=>{if(byId('tile-map'))updateWorldView();});
+  showHome();
+}
+init();
+</script>
+</body>
+</html>
